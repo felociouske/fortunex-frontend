@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    @apply bg-fx-bg text-fx-text font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { @apply bg-fx-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-fx-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-fx-muted; }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-teal {
+    @apply bg-fx-teal hover:bg-fx-teal-dk text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 w-full disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-red {
+    @apply bg-fx-red hover:bg-fx-red-dk text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 w-full;
+  }
+  .btn-outline {
+    @apply border border-fx-border hover:border-fx-teal text-fx-text hover:text-fx-teal font-medium py-3 px-6 rounded-lg transition-all duration-200 w-full bg-transparent;
+  }
+  .btn-ghost {
+    @apply text-fx-text-dim hover:text-fx-teal transition-colors duration-200 bg-transparent border-none;
+  }
+
+  /* Inputs */
+  .input-field {
+    @apply w-full bg-fx-surface border border-fx-border rounded-lg px-4 py-3 text-fx-text placeholder-fx-muted focus:outline-none focus:border-fx-teal transition-colors duration-200 text-sm;
+  }
+  .input-label {
+    @apply block text-xs font-medium text-fx-text-dim mb-1.5 uppercase tracking-wide;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-fx-surface border border-fx-border rounded-xl p-4;
+  }
+  .card-elevated {
+    @apply bg-fx-surface2 border border-fx-border rounded-xl p-4;
+  }
+
+  /* Nav link */
+  .nav-link {
+    @apply text-fx-text-dim hover:text-fx-text text-sm font-medium transition-colors duration-150;
+  }
+  .nav-link-active {
+    @apply text-fx-teal text-sm font-medium;
+  }
+}
