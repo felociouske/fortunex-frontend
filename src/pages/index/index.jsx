@@ -31,9 +31,6 @@ function Products() {
                 <h3 style={{ marginTop: 22, fontSize: 24, fontWeight: 800, color: "white" }}>{card.title}</h3>
                 <p style={{ marginTop: 16, color: "rgba(255,255,255,0.75)", lineHeight: 1.85 }}>{card.description}</p>
               </div>
-              <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 24, color: "#ff4f6f", fontWeight: 700, textDecoration: "none" }}>
-                Learn more <ArrowRight size={16} />
-              </a>
             </motion.article>
           ))}
         </div>

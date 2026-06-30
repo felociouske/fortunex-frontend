@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom";
 
 const tickerItems = [
   { pair: "EUR/USD", price: "1.0847", change: "+0.15%", up: true },
@@ -182,14 +183,23 @@ export default function Hero() {
               Access forex, crypto, stocks, commodities and synthetic indices from one secure platform with clear pricing and powerful tools.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 52 }}>
-              <a href="/register" style={{
-                display: "inline-flex", alignItems: "center", gap: 10,
-                padding: "15px 28px", borderRadius: 999,
-                background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none",
-                boxShadow: "0 16px 44px rgba(255,79,120,0.28)",
-              }}>
+              <Link
+                to="/register"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "15px 28px",
+                  borderRadius: 999,
+                  background: "#ff4f6f",
+                  color: "white",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                  boxShadow: "0 16px 44px rgba(255,79,120,0.28)",
+                }}
+              >
                 Open account <ArrowRight size={18} />
-              </a>
+              </Link>
               <a href="#products" style={{
                 display: "inline-flex", alignItems: "center",
                 padding: "15px 28px", borderRadius: 999,
@@ -368,9 +378,6 @@ function MarketsStrip() {
               <div style={{ padding: "18px 20px 22px" }}>
                 <h3 style={{ fontSize: 17, fontWeight: 700, color: "white", marginBottom: 8, margin: "0 0 8px" }}>{market.name}</h3>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.65, margin: 0 }}>{market.desc}</p>
-                <a href="/login" style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 14, color: "#ff4f6f", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>
-                  Learn more <ArrowRight size={14} />
-                </a>
               </div>
             </motion.div>
           ))}
@@ -455,14 +462,23 @@ function PlatformsSection() {
                 <p style={{ fontSize: 16, lineHeight: 1.85, color: "rgba(255,255,255,0.68)", marginBottom: 28, margin: "0 0 28px" }}>
                   {platform.description}
                 </p>
-                <a href={platform.href} style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  padding: "13px 24px", borderRadius: 999,
-                  background: "#ff4f6f", color: "white", fontWeight: 700,
-                  textDecoration: "none", fontSize: 14,
-                }}>
-                  {platform.cta} <ArrowRight size={16} />
-                </a>
+                <Link
+                    to={platform.href}
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "13px 24px",
+                        borderRadius: 999,
+                        background: "#ff4f6f",
+                        color: "white",
+                        fontWeight: 700,
+                        textDecoration: "none",
+                        fontSize: 14,
+                    }}
+                >
+                    {platform.cta} <ArrowRight size={16} />
+                </Link>
               </div>
 
               {/* Image side */}
@@ -592,15 +608,24 @@ function GetStartedSection() {
           transition={{ duration: 0.55 }}
           style={{ textAlign: "center", marginTop: 52 }}
         >
-          <a href="/register" style={{
-            display: "inline-flex", alignItems: "center", gap: 10,
-            padding: "16px 34px", borderRadius: 999,
-            background: "#ff4f6f", color: "white", fontWeight: 700,
-            textDecoration: "none", fontSize: 15,
-            boxShadow: "0 16px 44px rgba(255,79,120,0.26)",
-          }}>
+        <Link
+            to="/register"
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "16px 34px",
+                borderRadius: 999,
+                background: "#ff4f6f",
+                color: "white",
+                fontWeight: 700,
+                textDecoration: "none",
+                fontSize: 15,
+                boxShadow: "0 16px 44px rgba(255,79,120,0.26)",
+            }}
+        >
             Open a free account <ArrowRight size={18} />
-          </a>
+        </Link>
         </motion.div>
       </div>
 

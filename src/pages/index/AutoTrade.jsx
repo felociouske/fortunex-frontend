@@ -37,14 +37,6 @@ export default function AutoTrade() {
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 520, lineHeight: 1.85, marginBottom: 36 }}>
               Automate your trading strategies with smart bots that run 24/7. No coding required — define your rules visually and let the bot execute.
             </p>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href="/login" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", borderRadius: 999, background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none", boxShadow: "0 16px 44px rgba(255,79,120,0.28)" }}>
-                Launch AutoTrade <ArrowRight size={18} />
-              </a>
-              <a href="/register" style={{ display: "inline-flex", alignItems: "center", padding: "14px 28px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.18)", color: "white", fontWeight: 700, textDecoration: "none" }}>
-                Open free account
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>

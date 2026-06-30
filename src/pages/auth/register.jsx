@@ -298,13 +298,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <p className="text-xs text-fx-muted">
-                By signing up, you agree to our{" "}
-                <a href="#" className="text-fx-teal hover:underline">Terms of Service</a>
-                {" "}and{" "}
-                <a href="#" className="text-fx-teal hover:underline">Privacy Policy</a>.
-              </p>
-
               <div className="flex gap-3">
                 <button type="button" onClick={() => setStep(1)}
                   className="flex items-center gap-1 btn-outline px-4 py-3 w-auto">

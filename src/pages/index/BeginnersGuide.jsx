@@ -60,9 +60,6 @@ export default function BeginnersGuide() {
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 520, lineHeight: 1.85, marginBottom: 36 }}>
               Everything you need to understand trading from the ground up — markets, risk, execution and your first trade.
             </p>
-            <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", borderRadius: 999, background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none", boxShadow: "0 16px 44px rgba(255,79,120,0.28)" }}>
-              Start with a demo <ArrowRight size={18} />
-            </a>
           </motion.div>
         </div>
       </section>
@@ -106,9 +103,6 @@ export default function BeginnersGuide() {
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
             <h2 style={{ fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 800, margin: 0 }}>Key terms</h2>
-            <a href="/index/support/glossary" style={{ color: "#ff4f6f", fontWeight: 700, fontSize: 14, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
-              Full glossary <ArrowRight size={14} />
-            </a>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
             {concepts.map((c, i) => (

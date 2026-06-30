@@ -113,9 +113,6 @@ export default function TradingStrategies() {
           {/* CTA */}
           <div style={{ textAlign: "center", marginTop: 64 }}>
             <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", marginBottom: 24 }}>Practice any of these strategies risk-free on a demo account.</p>
-            <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", borderRadius: 999, background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none", boxShadow: "0 16px 44px rgba(255,79,120,0.28)" }}>
-              Open demo account <ArrowRight size={18} />
-            </a>
           </div>
         </div>
       </section>

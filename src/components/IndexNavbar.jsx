@@ -239,7 +239,7 @@ export default function Navbar() {
         }}
       >
         {/* Logo */}
-        <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+        <a style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
           <img
             src={logoSrc}
             alt="FortuNex"
@@ -276,7 +276,6 @@ export default function Navbar() {
             EN
           </button>
           <a
-            href="/login"
             className="desktop-nav"
             style={{
               padding: "10px 22px",
@@ -292,7 +291,7 @@ export default function Navbar() {
             Log in
           </a>
           <a
-            href="/register"
+           
             style={{
               padding: "10px 22px",
               borderRadius: 999,
@@ -412,10 +411,10 @@ export default function Navbar() {
             </div>
 
             <div style={{ marginTop: "auto", paddingTop: 28, display: "flex", flexDirection: "column", gap: 12 }}>
-              <a href="/login" style={{ padding: "14px 18px", borderRadius: 14, border: "2px solid rgba(255,255,255,0.3)", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
+              <a  style={{ padding: "14px 18px", borderRadius: 14, border: "2px solid rgba(255,255,255,0.3)", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
                 Log in
               </a>
-              <a href="/register" style={{ padding: "14px 18px", borderRadius: 14, background: "#ff4f6f", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
+              <a  style={{ padding: "14px 18px", borderRadius: 14, background: "#ff4f6f", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
                 Open account
               </a>
             </div>

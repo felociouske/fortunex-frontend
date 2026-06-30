@@ -102,9 +102,24 @@ export default function WhyChooseUs() {
             <p style={{ fontSize: 16, color: "rgba(255,255,255,0.65)", marginBottom: 32, maxWidth: 480, margin: "0 auto 32px" }}>
               Open a demo account in minutes and explore the platform with no risk.
             </p>
-            <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", borderRadius: 999, background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none", boxShadow: "0 16px 44px rgba(255,79,120,0.28)" }}>
-              Open free account <ArrowRight size={18} />
-            </a>
+            <Link
+                to="/register"
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "16px 34px",
+                    borderRadius: 999,
+                    background: "#ff4f6f",
+                    color: "white",
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    fontSize: 15,
+                    boxShadow: "0 16px 44px rgba(255,79,120,0.26)",
+                }}
+            >
+                Open a free account <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>

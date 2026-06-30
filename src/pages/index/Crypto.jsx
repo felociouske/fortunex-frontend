@@ -39,14 +39,6 @@ export default function Crypto() {
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 520, lineHeight: 1.85, marginBottom: 36 }}>
               Trade CFDs on Bitcoin, Ethereum and leading altcoins 24/7. No wallets, no complexity — just markets.
             </p>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 28px", borderRadius: 999, background: "#ff4f6f", color: "white", fontWeight: 700, textDecoration: "none", boxShadow: "0 16px 44px rgba(255,79,120,0.28)" }}>
-                Start trading <ArrowRight size={18} />
-              </a>
-              <a href="/login" style={{ display: "inline-flex", alignItems: "center", padding: "14px 28px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.18)", color: "white", fontWeight: 700, textDecoration: "none" }}>
-                Try on demo
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>
