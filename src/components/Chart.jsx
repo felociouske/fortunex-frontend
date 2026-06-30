@@ -143,6 +143,8 @@ export default function Chart({ symbol, instrumentName, onTicksUpdate }) {
   const seriesRef = useRef(null);
   const seededTickCountRef = useRef(0);
   const lastChartTimeRef = useRef(null);
+  const lastChartValueRef = useRef(null);
+  const animFrameRef = useRef(null);
 
   const [seedError, setSeedError] = useState("");
   const { ticks, latest, connected } = useTicksSocket(symbol);
@@ -216,6 +218,7 @@ export default function Chart({ symbol, instrumentName, onTicksUpdate }) {
         seriesRef.current.setData(deduped);
         seededTickCountRef.current = data.length ? data[data.length - 1].tick_count : 0;
         lastChartTimeRef.current = deduped.length ? deduped[deduped.length - 1].time : null;
+        lastChartValueRef.current = deduped.length ? deduped[deduped.length - 1].value : null;
         chartRef.current?.timeScale().fitContent();
       })
       .catch(() => {
@@ -227,7 +230,12 @@ export default function Chart({ symbol, instrumentName, onTicksUpdate }) {
     };
   }, [symbol]);
 
-  // Append live ticks as they arrive.
+  // Append live ticks as they arrive, easing the line from the previous
+  // price to the new one instead of snapping instantly. Real ticks are
+  // ~1/sec, so a hard update() per tick reads as choppy; lightweight-charts
+  // only rejects *backwards* time on update(), so repeated calls on the
+  // SAME time bucket while we animate toward the new value are legal --
+  // only the final call advances `time` to the next bucket.
   useEffect(() => {
     if (!latest || !seriesRef.current) return;
     // Skip ticks that history-seeding already covered, to avoid a
@@ -244,8 +252,45 @@ export default function Chart({ symbol, instrumentName, onTicksUpdate }) {
     }
     lastChartTimeRef.current = time;
 
-    seriesRef.current.update({ time, value: Number(latest.price) });
+    const targetValue = Number(latest.price);
+    const startValue = lastChartValueRef.current ?? targetValue;
+    lastChartValueRef.current = targetValue;
+
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+
+    // No real previous value yet (first tick) -- just place it directly.
+    if (startValue === targetValue) {
+      seriesRef.current.update({ time, value: targetValue });
+      return;
+    }
+
+    const duration = 980; // ms -- fill nearly the full ~1s gap between ticks
+    const startedAt = performance.now();
+
+    const step = (now) => {
+      const elapsed = now - startedAt;
+      const t = Math.min(elapsed / duration, 1);
+      // linear -- constant speed all the way to the next tick, no easing
+      // tail that slows down and reads as the market "pausing"
+      const value = startValue + (targetValue - startValue) * t;
+
+      seriesRef.current?.update({ time, value });
+
+      if (t < 1) {
+        animFrameRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(step);
   }, [latest]);
+
+  // Cancel any in-flight animation on unmount/symbol change.
+  useEffect(() => {
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      lastChartValueRef.current = null;
+    };
+  }, [symbol]);
 
   // Surface the rolling tick buffer to the parent (e.g. for AI trend
   // advisory) without that parent needing its own duplicate WebSocket

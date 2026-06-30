@@ -15,6 +15,10 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Shared in-flight refresh promise so multiple 401s arriving at once
+// reuse the same refresh call instead of each posting separately.
+let refreshPromise = null;
+
 // Handle 401 — try to refresh token, else force logout
 api.interceptors.response.use(
   (res) => res,
@@ -23,11 +27,18 @@ api.interceptors.response.use(
     if (err.response?.status === 401 && !original._retry) {
       original._retry = true;
       try {
-        const refresh = localStorage.getItem("refresh_token");
-        const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1"}/auth/token/refresh/`,
-          { refresh }
-        );
+        if (!refreshPromise) {
+          const refresh = localStorage.getItem("refresh_token");
+          refreshPromise = axios
+            .post(
+              `${import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1"}/auth/token/refresh/`,
+              { refresh }
+            )
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
+        const { data } = await refreshPromise;
         localStorage.setItem("access_token", data.access);
         original.headers.Authorization = `Bearer ${data.access}`;
         return api(original);
