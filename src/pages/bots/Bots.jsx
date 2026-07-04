@@ -203,10 +203,6 @@ export default function Bots() {
                 <span className="text-fx-text font-medium">
                   {activeAutomation.product.name}
                 </span>
-                {" — "}
-                <span className="text-fx-teal font-medium">
-                  {(Number(activeAutomation.product.win_chance) * 100).toFixed(0)}% win chance
-                </span>
               </span>
             </div>
           )}
