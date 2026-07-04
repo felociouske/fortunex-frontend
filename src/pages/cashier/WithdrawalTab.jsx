@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cashierAPI } from "../../api/cashier";
 import AccountBanner from "./AccountBanner";
 import AmountInput from "./AmountInput";
@@ -7,9 +7,20 @@ export default function WithdrawalTab() {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [bankAccount, setBankAccount] = useState("");
+  const [rate, setRate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  // Same shared rate endpoint the M-Pesa deposit form uses -- one
+  // source of truth, so this preview can never drift from the backend.
+  useEffect(() => {
+    cashierAPI.exchangeRate()
+      .then(({ data }) => setRate(Number(data.usd_to_kes)))
+      .catch(() => setRate(null));
+  }, []);
+
+  const kesPreview = amount && rate ? (Number(amount) * rate).toFixed(0) : null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +40,7 @@ export default function WithdrawalTab() {
     }
 
     try {
-      await cashierAPI.withdrawal({ amount, currency, bank_account: bankAccount });
+      await cashierAPI.withdrawal({ amount, currency, payout_details: bankAccount });
       setMessage("Withdrawal request submitted successfully.");
       setAmount("");
       setBankAccount("");
@@ -53,6 +64,15 @@ export default function WithdrawalTab() {
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
         <AmountInput amount={amount} onChange={setAmount} currency={currency} />
+        {/* Your wallet is always USD internally -- this just shows what
+            that translates to in KES, since withdrawals are still paid
+            out manually by an admin (M-Pesa payout automation isn't
+            built yet -- that's a separate task). */}
+        {kesPreview && (
+          <p className="text-sm text-fx-text-dim -mt-3">
+            You will receive approximately <span className="text-fx-text font-medium">KES {kesPreview}</span>.
+          </p>
+        )}
 
         <div>
           <label className="input-label">Currency</label>
@@ -68,12 +88,12 @@ export default function WithdrawalTab() {
         </div>
 
         <div>
-          <label className="input-label">Bank account / payout details</label>
+          <label className="input-label">Payout details</label>
           <input
             value={bankAccount}
             onChange={(e) => setBankAccount(e.target.value)}
             className="input-field"
-            placeholder="Bank account, PayPal, or mobile wallet"
+            placeholder="M-Pesa phone number, bank account, etc."
           />
         </div>
 

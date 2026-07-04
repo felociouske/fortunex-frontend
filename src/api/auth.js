@@ -15,11 +15,20 @@ export const authAPI = {
   getProfile: () => api.get("/auth/profile/"),
   updateProfile: (data) => api.patch("/auth/profile/", data),
 
+  // Change password (requires old + new) -- logs out other sessions server-side
+  changePassword: (data) => api.post("/auth/change-password/", data),
+
   // Submit KYC documents for verification
-  submitKYC: (formData) =>
-    api.post("/auth/kyc/", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  // KYC -- per category now
+    getKYC: () => api.get("/auth/kyc/"),
+    submitKYCIdentity: (formData) =>
+      api.post("/auth/kyc/identity/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      }),
+    submitKYCAddress: (formData) =>
+      api.post("/auth/kyc/address/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      }),
 
   // Refresh access token
   refreshToken: (refresh) => api.post("/auth/token/refresh/", { refresh }),

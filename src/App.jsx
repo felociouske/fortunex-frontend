@@ -38,6 +38,7 @@ import KycPage     from "./pages/kyc/kyc.jsx";
 import Bots        from "./pages/bots/Bots.jsx";
 import NotificationsPage from "./pages/notifications/NotificationsPage.jsx";
 import KYCPromptModal from "./components/KYCPromptModal.jsx";
+import Transactions from "./pages/transactions/Transactions.jsx";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ export default function App() {
           <Route path="/profile"    element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/affiliate"  element={<PrivateRoute><Affiliate /></PrivateRoute>} />
           <Route path="/cashier"    element={<PrivateRoute><Cashier /></PrivateRoute>} />
+          <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
           <Route path="/kyc"        element={<PrivateRoute><KycPage /></PrivateRoute>} />
           <Route path="/bots"       element={<PrivateRoute><Bots /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ArrowRight, ShieldCheck, Globe2, BarChart3, Cpu } from "lucide-react"
+import { ShieldCheck, Globe2, BarChart3 } from "lucide-react"
 import Navbar from "../../components/IndexNavbar"
 import Hero from "../../components/IndexHero"
 import Footer from "../../components/IndexFooter"
@@ -9,10 +9,14 @@ function Products() {
     <section id="products" style={{ padding: "84px 28px 64px", background: "#050814" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <div style={{ display: "grid", gap: 16, marginBottom: 36, maxWidth: 640 }}>
-          <h2 style={{ fontSize: "clamp(36px, 4vw, 52px)", lineHeight: 1.05, color: "white", fontWeight: 800 }}>A premium experience for modern trading.</h2>
-          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.85, fontSize: 17 }}>From advanced automation to mobile trading, every product is built to keep you in control with powerful execution and elegant design.</p>
+          <h2 style={{ fontSize: "clamp(30px, 4vw, 52px)", lineHeight: 1.05, color: "white", fontWeight: 800 }}>
+            A premium experience for modern trading.
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.85, fontSize: 17 }}>
+            From advanced automation to mobile trading, every product is built to keep you in control with powerful execution and elegant design.
+          </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
+        <div className="fx-products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
           {[
             { title: "SmartTrader", description: "A fast web platform for live trading across forex, crypto and indices.", badge: "Web platform" },
             { title: "AutoTrade", description: "Automate your strategy with intelligent bots and built-in signals.", badge: "Automation" },
@@ -24,7 +28,7 @@ function Products() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: index * 0.08 }}
-              style={{ padding: 28, borderRadius: 28, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", minHeight: 260, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+              style={{ padding: 28, borderRadius: 28, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", minHeight: 200, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
             >
               <div>
                 <span style={{ display: "inline-flex", padding: "8px 14px", borderRadius: 999, background: "rgba(255,255,255,0.08)", color: "#ff9aa4", fontWeight: 700, fontSize: 12 }}>{card.badge}</span>
@@ -44,10 +48,14 @@ function Benefits() {
     <section id="security" style={{ padding: "80px 28px", background: "linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%)" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gap: 30 }}>
         <div style={{ maxWidth: 640 }}>
-          <h2 style={{ fontSize: "clamp(36px, 4vw, 52px)", lineHeight: 1.05, fontWeight: 800, color: "white" }}>Safe, compliant and designed to stay online.</h2>
-          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.85, marginTop: 18 }}>We combine secure infrastructure with transparent processes so you can trade with confidence across multiple asset classes.</p>
+          <h2 style={{ fontSize: "clamp(30px, 4vw, 52px)", lineHeight: 1.05, fontWeight: 800, color: "white" }}>
+            Safe, compliant and designed to stay online.
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.85, marginTop: 18 }}>
+            We combine secure infrastructure with transparent processes so you can trade with confidence across multiple asset classes.
+          </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+        <div className="fx-benefits-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
           {[
             { icon: ShieldCheck, title: "Regulated & secure", desc: "Multi-layer security, account segregation and risk controls." },
             { icon: Globe2, title: "Global access", desc: "Trade forex, crypto, stocks and commodities 24/7." },
@@ -79,9 +87,11 @@ function MarketHighlights() {
     <section id="markets" style={{ padding: "82px 28px 100px", background: "#050814" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
-          <h2 style={{ fontSize: "clamp(36px, 4vw, 52px)", lineHeight: 1.1, fontWeight: 800, color: "white" }}>The markets you want, all in one boarding pass.</h2>
+          <h2 style={{ fontSize: "clamp(28px, 4vw, 52px)", lineHeight: 1.1, fontWeight: 800, color: "white" }}>
+            The markets you want, all in one boarding pass.
+          </h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 18 }}>
+        <div className="fx-markets-hl-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 18 }}>
           {["Forex", "Crypto", "Synthetic Indices", "Stocks", "Commodities"].map((market, index) => (
             <motion.div
               key={market}
@@ -91,14 +101,13 @@ function MarketHighlights() {
               transition={{ duration: 0.5, delay: index * 0.08 }}
               style={{ padding: 24, borderRadius: 24, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
-                <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.08)", display: "grid", placeItems: "center" }}>
-                  <Cpu size={20} color="white" />
-                </div>
-                <h3 style={{ color: "white", fontSize: 20, margin: 0 }}>{market}</h3>
-              </div>
-              <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7, margin: 0 }}>
-                {market === "Forex" ? "Major, minor and exotic pairs with competitive spreads." : market === "Crypto" ? "Bitcoin, Ethereum and leading digital assets 24/7." : market === "Synthetic Indices" ? "Exclusive indices designed for round-the-clock volatility." : market === "Stocks" ? "Global equities with real-time access." : "Gold, oil and energy markets on one platform."}
+              <h3 style={{ color: "white", fontSize: 20, margin: "0 0 10px" }}>{market}</h3>
+              <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7, margin: 0, fontSize: 14 }}>
+                {market === "Forex" ? "Major, minor and exotic pairs with competitive spreads."
+                : market === "Crypto" ? "Bitcoin, Ethereum and leading digital assets 24/7."
+                : market === "Synthetic Indices" ? "Exclusive indices designed for round-the-clock volatility."
+                : market === "Stocks" ? "Global equities with real-time access."
+                : "Gold, oil and energy markets on one platform."}
               </p>
             </motion.div>
           ))}
@@ -119,6 +128,13 @@ export default function Home() {
         <MarketHighlights />
       </main>
       <Footer />
+      <style>{`
+        @media (max-width: 640px) {
+          .fx-products-grid { grid-template-columns: 1fr !important; }
+          .fx-benefits-grid { grid-template-columns: 1fr !important; }
+          .fx-markets-hl-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   )
 }

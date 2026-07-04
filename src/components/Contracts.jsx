@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import useAuthStore from "../store/authStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { tradingAPI } from "../api/trading";
 import ContractTypePicker from "./ContractTypePicker";
 import PredictionInput from "./PredictionInput";
 import BotRunPanel from "./BotRunPanel";
+
+
 
 const TICK_PRESETS = [1, 5, 10, 20];
 const SECOND_PRESETS = [15, 30, 60, 120];
@@ -37,7 +40,31 @@ export default function Contracts({ instrument, wallet, onOpened }) {
   const [side, setSide] = useState("RISE"); // only meaningful for RISE_FALL; used by BotRunPanel, not manual submit
   const [durationUnit, setDurationUnit] = useState("ticks");
   const [durationValue, setDurationValue] = useState(5);
-  const [stake, setStake] = useState(10);
+  
+  const user = useAuthStore((s) => s.user);
+
+  const [stake, setStake] = useState(10); // 10 is just the pre-hydration default -- overwritten below the instant we know who's logged in
+  const [stakeLoaded, setStakeLoaded] = useState(false); // guards against re-saving "10" over a real saved value before we've loaded it
+
+  // Load this user's last-used stake once we know their id. Runs once
+  // per login (stakeLoaded flips true and stays true), not on every render.
+  useEffect(() => {
+    if (!user?.id || stakeLoaded) return;
+    const saved = localStorage.getItem(`fx_stake_${user.id}`);
+    if (saved !== null && !Number.isNaN(Number(saved))) {
+      setStake(Number(saved));
+    }
+    setStakeLoaded(true);
+  }, [user?.id, stakeLoaded]);
+
+  // Persist every change the user makes (preset click or manual typing) --
+  // but only AFTER the load effect above has run, so we never clobber a
+  // saved value with the "10" default in the brief window before it loads.
+  useEffect(() => {
+    if (!user?.id || !stakeLoaded) return;
+    localStorage.setItem(`fx_stake_${user.id}`, String(stake));
+  }, [stake, user?.id, stakeLoaded]);
+
   const [submitting, setSubmitting] = useState(null); // "RISE" | "FALL" | "SUBMIT" | null
   const [error, setError] = useState("");
 
@@ -133,8 +160,7 @@ export default function Contracts({ instrument, wallet, onOpened }) {
         <div className="flex items-start gap-2 rounded-lg bg-fx-surface2 px-3 py-2.5 text-xs text-fx-text-dim">
           <Sparkles size={14} className="text-fx-teal flex-shrink-0 mt-0.5" />
           <span>
-            <span className="text-fx-teal font-medium">{tier.active_automation.name}</span> is active —
-            your win chance is currently {tier.win_chance_percent.toFixed(0)}%.
+            <span className="text-fx-teal font-medium">{tier.active_automation.name}</span> is active
           </span>
         </div>
       )}
@@ -232,9 +258,6 @@ export default function Contracts({ instrument, wallet, onOpened }) {
             {wallet?.currency || "USD"}
           </span>
         </div>
-        <p className="text-fx-text-dim text-xs mt-1.5">
-          Funded from your real balance first, then your deposit balance if needed.
-        </p>
       </div>
 
       {/* Payout preview */}
@@ -291,6 +314,7 @@ export default function Contracts({ instrument, wallet, onOpened }) {
       {/* Rise/Fall direction toggle for bot automation -- manual trading
           uses the dedicated buttons above directly; this toggle exists
           purely so BotRunPanel knows which direction to freeze into a run. */}
+          <p>Fortunex Trading Automation Only</p>
       {contractType === "RISE_FALL" && (
         <div className="grid grid-cols-2 gap-2 -mt-2">
           {["RISE", "FALL"].map((s) => (

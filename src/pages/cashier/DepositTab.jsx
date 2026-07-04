@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { CreditCard, Building2, Wallet as WalletIcon, Banknote, Bitcoin } from "lucide-react";
-import { cashierAPI } from "../../api/cashier";
+import { CreditCard, Building2, Wallet as WalletIcon, Banknote, Bitcoin, Smartphone } from "lucide-react";
 import AccountBanner from "./AccountBanner";
-import AmountInput from "./AmountInput";
+import MpesaDepositForm from "./MpesaDepositForm";
+import ManualMpesaDepositForm from "../../components/ManualMpesaDepositForm";
 
 const paymentMethods = [
   { label: "Credit / Debit", icon: CreditCard },
@@ -14,34 +14,7 @@ const paymentMethods = [
 const cryptoMethods = ["Bitcoin", "Ethereum", "Litecoin", "USD Coin", "Tether"];
 
 export default function DepositTab() {
-  const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("USD");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-    setLoading(true);
-
-    if (!amount || Number(amount) <= 0) {
-      setError("Please enter a valid deposit amount.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await cashierAPI.deposit({ amount, currency });
-      setMessage("Deposit request submitted successfully.");
-      setAmount("");
-    } catch (err) {
-      setError(err.response?.data?.detail || "Unable to submit deposit request.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [method, setMethod] = useState("mpesa"); // "mpesa" | "manual"
 
   return (
     <div>
@@ -54,32 +27,32 @@ export default function DepositTab() {
         <AccountBanner />
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
-        <AmountInput amount={amount} onChange={setAmount} currency={currency} />
-
-        <div>
-          <label className="input-label">Currency</label>
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="input-field"
-          >
-            <option value="USD">USD</option>
-            <option value="KES">KES</option>
-            <option value="EUR">EUR</option>
-          </select>
-        </div>
-
-        {error && <div className="text-fx-red text-sm">{error}</div>}
-        {message && <div className="text-fx-teal text-sm">{message}</div>}
-
-        <button type="submit" disabled={loading} className="btn-teal">
-          {loading ? "Submitting…" : "Submit deposit"}
+      <div className="flex gap-2 mb-6">
+        <button
+          type="button"
+          onClick={() => setMethod("mpesa")}
+          className="px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2"
+          style={method === "mpesa"
+            ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
+            : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
+        >
+          <Smartphone size={16} /> M-Pesa (instant)
         </button>
-      </form>
+        <button
+          type="button"
+          onClick={() => setMethod("manual")}
+          className="px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2"
+          style={method === "manual"
+            ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
+            : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
+        >
+          <Smartphone size={16} /> M-Pesa (manual)
+        </button>
+      </div>
 
-      {/* Reference: available payment methods (static for now) */}
+      {method === "mpesa" ? <MpesaDepositForm /> : <ManualMpesaDepositForm />}
+
+      {/* Reference: other payment methods (static for now, not yet functional) */}
       <div className="mt-10 space-y-6">
         <div>
           <h2 className="text-lg font-semibold mb-3">

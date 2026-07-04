@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ChevronDown, ChevronUp, Globe } from "lucide-react"
+import { Link } from "react-router-dom"
 
-const logoSrc = "/images/logo3.png"
+const logoSrc = "/fortunex-logo-v2.svg"
 
 const navItems = [
   {
@@ -12,27 +13,27 @@ const navItems = [
         {
           heading: "Markets",
           links: [
-            { label: "Forex", href: "/forex" },
-            { label: "Derived Indices", href: "/derived-indices" },
-            { label: "Stocks", href: "/stocks" },
-            { label: "Commodities", href: "/commodities" },
-            { label: "Crypto", href: "/crypto" },
+            { label: "Forex", to: "/forex" },
+            { label: "Derived Indices", to: "/derived-indices" },
+            { label: "Stocks", to: "/stocks" },
+            { label: "Commodities", to: "/commodities" },
+            { label: "Crypto", to: "/crypto" },
           ],
         },
         {
           heading: "Trade",
           links: [
-            { label: "CFDs", href: "/cfds" },
-            { label: "Options", href: "/options" },
-            { label: "Multipliers", href: "/multipliers" },
+            { label: "CFDs", to: "/cfds" },
+            { label: "Options", to: "/options" },
+            { label: "Multipliers", to: "/multipliers" },
           ],
         },
         {
           heading: "Tools",
           links: [
-            { label: "SmartTrader", href: "/smarttrader" },
-            { label: "AutoTrade", href: "/autotrade" },
-            { label: "Economic Calendar", href: "/economic-calendar" },
+            { label: "SmartTrader", to: "/smarttrader" },
+            { label: "AutoTrade", to: "/autotrade" },
+            { label: "Economic Calendar", to: "/economic-calendar" },
           ],
         },
       ],
@@ -45,16 +46,16 @@ const navItems = [
         {
           heading: "Company",
           links: [
-            { label: "Who we are", href: "/who-we-are" },
-            { label: "Why choose us", href: "/why-choose-us" },
-            { label: "Our principles", href: "/our-principles" },
+            { label: "Who we are", to: "/who-we-are" },
+            { label: "Why choose us", to: "/why-choose-us" },
+            { label: "Our principles", to: "/our-principles" },
           ],
         },
         {
           heading: "Legal",
           links: [
-            { label: "Regulatory info", href: "/regulatory-info" },
-            { label: "Terms & conditions", href: "/terms-conditions" },
+            { label: "Regulatory info", to: "/regulatory-info" },
+            { label: "Terms & conditions", to: "/terms-conditions" },
           ],
         },
       ],
@@ -67,17 +68,17 @@ const navItems = [
         {
           heading: "Learn",
           links: [
-            { label: "Beginners guide", href: "/beginners-guide" },
-            { label: "Trading strategies", href: "/trading-strategies" },
-            { label: "Glossary", href: "/glossary" },
+            { label: "Beginners guide", to: "/beginners-guide" },
+            { label: "Trading strategies", to: "/trading-strategies" },
+            { label: "Glossary", to: "/glossary" },
           ],
         },
         {
           heading: "Support",
           links: [
-            { label: "Help centre", href: "#" },
-            { label: "Live chat", href: "#" },
-            { label: "Community", href: "#" },
+            { label: "Help centre", to: "/" },
+            { label: "Live chat", to: "/" },
+            { label: "Community", to: "/" },
           ],
         },
       ],
@@ -113,9 +114,9 @@ function DropdownPanel({ columns }) {
             {col.heading}
           </span>
           {col.links.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.to}
               style={{
                 fontSize: 15,
                 fontWeight: 500,
@@ -128,7 +129,7 @@ function DropdownPanel({ columns }) {
               onMouseLeave={(e) => (e.target.style.color = "#111")}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       ))}
@@ -136,7 +137,7 @@ function DropdownPanel({ columns }) {
   )
 }
 
-function NavItem({ item }) {
+function NavItem({ item, onClose }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -150,8 +151,9 @@ function NavItem({ item }) {
 
   if (!item.dropdown) {
     return (
-      <a
-        href={item.href}
+      <Link
+        to={item.to}
+        onClick={onClose}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -166,8 +168,7 @@ function NavItem({ item }) {
         }}
       >
         {item.label}
-        <span style={{ fontSize: 11, opacity: 0.7 }}>arrow_outward</span>
-      </a>
+      </Link>
     )
   }
 
@@ -191,7 +192,7 @@ function NavItem({ item }) {
           transition: "background 0.15s",
         }}
         onMouseEnter={(e) => { if (!open) e.currentTarget.style.background = "rgba(255,255,255,0.1)" }}
-        onMouseLeave={(e) => { if (!open) e.currentTarget.style.background = "transparent" }}
+        onMouseLeave={(e) => { if (!open) e.currentTarget.style.background = open ? "rgba(255,255,255,0.15)" : "transparent" }}
       >
         {item.label}
         {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -214,6 +215,12 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll)
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : ""
+    return () => { document.body.style.overflow = "" }
+  }, [mobileOpen])
 
   return (
     <>
@@ -239,17 +246,17 @@ export default function Navbar() {
         }}
       >
         {/* Logo */}
-        <a style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+        <Link to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
           <img
             src={logoSrc}
             alt="FortuNex"
             style={{ display: "block", width: 142, height: 40, objectFit: "contain" }}
           />
-        </a>
+        </Link>
 
-        {/* Center pill nav */}
+        {/* Center pill nav — desktop only */}
         <nav
-          className="desktop-nav"
+          className="fx-desktop-nav"
           style={{
             display: "flex",
             alignItems: "center",
@@ -269,14 +276,15 @@ export default function Navbar() {
         {/* Right side actions */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
           <button
-            className="desktop-nav"
+            className="fx-desktop-nav"
             style={{ display: "flex", alignItems: "center", gap: 6, background: "transparent", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", fontSize: 14, fontWeight: 500 }}
           >
             <Globe size={16} />
             EN
           </button>
-          <a
-            className="desktop-nav"
+          <Link
+            to="/login"
+            className="fx-desktop-nav"
             style={{
               padding: "10px 22px",
               borderRadius: 999,
@@ -289,9 +297,9 @@ export default function Navbar() {
             }}
           >
             Log in
-          </a>
-          <a
-           
+          </Link>
+          <Link
+            to="/register"
             style={{
               padding: "10px 22px",
               borderRadius: 999,
@@ -303,13 +311,15 @@ export default function Navbar() {
             }}
           >
             Open account
-          </a>
+          </Link>
+          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="mobile-menu-button"
-            style={{ display: "none", border: "none", background: "transparent", color: "white", cursor: "pointer" }}
+            className="fx-mobile-menu-btn"
+            style={{ display: "none", border: "none", background: "transparent", color: "white", cursor: "pointer", padding: 4 }}
+            aria-label="Open menu"
           >
-            <Menu size={22} />
+            <Menu size={24} />
           </button>
         </div>
       </motion.header>
@@ -333,18 +343,18 @@ export default function Navbar() {
               overflowY: "auto",
             }}
           >
+            {/* Mobile header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-              <img
-                src={logoSrc}
-                alt="FortuNex"
-                style={{ display: "block", width: 142, height: 40, objectFit: "contain" }}
-              />
+              <Link to="/" onClick={() => setMobileOpen(false)}>
+                <img src={logoSrc} alt="FortuNex" style={{ display: "block", width: 142, height: 40, objectFit: "contain" }} />
+              </Link>
               <button onClick={() => setMobileOpen(false)} style={{ border: "none", background: "transparent", color: "white", cursor: "pointer" }}>
-                <X size={22} />
+                <X size={24} />
               </button>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {/* Mobile nav items */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
               {navItems.map((item) => (
                 <div key={item.label}>
                   <button
@@ -385,19 +395,19 @@ export default function Navbar() {
                         <div style={{ padding: "12px 0 16px 12px", display: "flex", flexDirection: "column", gap: 20 }}>
                           {item.dropdown.columns.map((col) => (
                             <div key={col.heading}>
-                              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 10 }}>
+                              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 10, margin: "0 0 10px" }}>
                                 {col.heading}
                               </p>
                               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                                 {col.links.map((link) => (
-                                  <a
+                                  <Link
                                     key={link.label}
-                                    href={link.href}
+                                    to={link.to}
                                     onClick={() => setMobileOpen(false)}
                                     style={{ color: "rgba(255,255,255,0.82)", fontSize: 15, textDecoration: "none", fontWeight: 500 }}
                                   >
                                     {link.label}
-                                  </a>
+                                  </Link>
                                 ))}
                               </div>
                             </div>
@@ -410,13 +420,22 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div style={{ marginTop: "auto", paddingTop: 28, display: "flex", flexDirection: "column", gap: 12 }}>
-              <a  style={{ padding: "14px 18px", borderRadius: 14, border: "2px solid rgba(255,255,255,0.3)", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
+            {/* Mobile CTA buttons */}
+            <div style={{ paddingTop: 28, display: "flex", flexDirection: "column", gap: 12 }}>
+              <Link
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                style={{ padding: "14px 18px", borderRadius: 14, border: "2px solid rgba(255,255,255,0.3)", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}
+              >
                 Log in
-              </a>
-              <a  style={{ padding: "14px 18px", borderRadius: 14, background: "#ff4f6f", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}>
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMobileOpen(false)}
+                style={{ padding: "14px 18px", borderRadius: 14, background: "#ff4f6f", color: "white", textAlign: "center", textDecoration: "none", fontWeight: 700 }}
+              >
                 Open account
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
@@ -424,8 +443,8 @@ export default function Navbar() {
 
       <style>{`
         @media (max-width: 960px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu-button { display: inline-flex !important; }
+          .fx-desktop-nav { display: none !important; }
+          .fx-mobile-menu-btn { display: inline-flex !important; }
         }
       `}</style>
     </>

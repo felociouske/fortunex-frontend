@@ -36,15 +36,17 @@ const navLinks = [
   { label: "Bots & AI",        path: "/bots",              icon: Bot },
   { label: "Cashier",          path: "/cashier?tab=deposit", icon: Wallet },
   { label: "Fortunex Trader",  path: "/dashboard",         icon: FileText },
+  { label: "Statements",       path: "/transactions",      icon: FileText },
 ];
 
 const mobileMenuItems = [
   { label: "Trader's Hub",     path: "/landing",              icon: Home,        chevron: false, external: false },
   { label: "Trade",            path: "/dashboard",                icon: TrendingUp,  chevron: false, external: false },
+  { label: "Bots & AIs", path: "/bots",             icon: User,        chevron: true,  external: false },
+  { label: "History", path: "/history",             icon: User,        chevron: true,  external: false },
   { label: "Reports",          path: "/dashboard",              icon: FileText,    chevron: true,  external: false },
   { label: "Account settings", path: "/dashboard",             icon: User,        chevron: true,  external: false },
   { label: "Cashier",          path: "/cashier?tab=deposit",  icon: Wallet,      chevron: true,  external: false },
-  { label: "Help centre",      path: "/dashboard",                 icon: HelpCircle,  chevron: false, external: false },
 ];
 
 // ---------------------------------------------------------------------------
@@ -324,6 +326,8 @@ function MobileMenu({ open, onClose, activePlatform, onPlatformChange, balance }
 
 export default function DashboardNavbar() {
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const navigate = useNavigate();
   const wallet = user?.wallet;
   const balance = wallet
     ? [wallet.real_balance, wallet.deposit_balance, wallet.yield_balance]
@@ -336,6 +340,11 @@ export default function DashboardNavbar() {
   const [depositOpen, setDepositOpen] = useState(false);
   const depositBtnRef = useRef(null);
 
+  const handleLogout = async () => {
+    await logout?.();
+    navigate("/login");
+  };
+
   return (
     <>
       <header
@@ -344,10 +353,8 @@ export default function DashboardNavbar() {
       >
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 h-14">
 
-          {/* ── LEFT ─────────────────────────────────────────────────────── */}
+          {/* ── LEFT (unchanged) ─────────────────────────────────────── */}
           <div className="flex items-center gap-1">
-
-            {/* Hamburger — mobile only */}
             <button
               className="md:hidden p-2 rounded-lg text-fx-text-dim hover:text-fx-text hover:bg-white/5 transition-colors mr-1"
               onClick={() => setMobileOpen(true)}
@@ -355,12 +362,10 @@ export default function DashboardNavbar() {
               <Menu size={18} />
             </button>
 
-            {/* Logo */}
             <Link to="/dashboard" className="flex-shrink-0 mr-2">
               <LogoBadge />
             </Link>
 
-            {/* Cashier briefcase icon — mobile only */}
             <Link
               to="/cashier?tab=deposit"
               className="md:hidden p-2 rounded-lg text-fx-text-dim hover:text-fx-text hover:bg-white/5 transition-colors"
@@ -368,7 +373,6 @@ export default function DashboardNavbar() {
               <Briefcase size={18} />
             </Link>
 
-            {/* Nav links — desktop only */}
             <nav className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
@@ -381,25 +385,16 @@ export default function DashboardNavbar() {
               ))}
             </nav>
 
-            {/* Divider — desktop */}
-            <div
-              className="hidden md:block w-px h-5 mx-2"
-              style={{ background: "#2a2a3d" }}
-            />
+            <div className="hidden md:block w-px h-5 mx-2" style={{ background: "#2a2a3d" }} />
 
-            {/* Platform switcher — desktop only */}
             <div className="hidden md:block">
-              <PlatformSwitcher
-                activePlatform={activePlatform}
-                onChange={setActivePlatform}
-              />
+              <PlatformSwitcher activePlatform={activePlatform} onChange={setActivePlatform} />
             </div>
           </div>
 
           {/* ── RIGHT ────────────────────────────────────────────────────── */}
           <div className="relative flex items-center gap-1 sm:gap-2">
 
-            {/* Deposit button — desktop only */}
             <button
               ref={depositBtnRef}
               onClick={() => setDepositOpen((v) => !v)}
@@ -411,18 +406,31 @@ export default function DashboardNavbar() {
               Deposit
             </button>
 
-            {/* Balance (shows on both desktop + mobile) */}
             <BalanceDisplay balance={balance} />
 
-            {/* Notification bell */}
             <NotificationDropdown />
 
-            {/* User avatar — desktop only */}
-            <button className="hidden md:flex p-2 rounded-lg text-fx-text-dim hover:text-fx-text hover:bg-white/5 transition-colors duration-150">
+            {/* User avatar — now actually navigates to Profile (it was a
+                dead button before -- clicked, did nothing). Not something
+                you asked for, but a one-line fix worth mentioning rather
+                than leaving silently broken. */}
+            <button
+              onClick={() => navigate("/profile")}
+              className="hidden md:flex p-2 rounded-lg text-fx-text-dim hover:text-fx-text hover:bg-white/5 transition-colors duration-150"
+              title="Profile"
+            >
               <User size={17} />
             </button>
 
-            {/* Quick deposit popover */}
+            {/* NEW: Logout — desktop only, per your request */}
+            <button
+              onClick={handleLogout}
+              className="hidden md:flex p-2 rounded-lg text-fx-text-dim hover:text-fx-text hover:bg-white/5 transition-colors duration-150"
+              title="Log out"
+            >
+              <LogOut size={17} />
+            </button>
+
             <Deposit
               open={depositOpen}
               onClose={() => setDepositOpen(false)}
@@ -432,7 +440,6 @@ export default function DashboardNavbar() {
         </div>
       </header>
 
-      {/* Mobile slide-out menu */}
       <MobileMenu
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}

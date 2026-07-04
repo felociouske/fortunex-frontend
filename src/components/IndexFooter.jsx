@@ -1,5 +1,4 @@
-
-import { MessageCircle, DownloadCloud } from "lucide-react"
+import { Link } from "react-router-dom"
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaLinkedin } from "react-icons/fa"
 
 const socialLinks = [
@@ -10,60 +9,200 @@ const socialLinks = [
   { icon: FaLinkedin, label: "LinkedIn", href: "#" },
 ]
 
-const appStores = [
-  { label: "Download on the App Store", href: "#" },
-  { label: "Get it on Google Play", href: "#" },
+const footerCols = [
+  {
+    heading: "Trade",
+    links: [
+      { label: "CFDs", to: "/cfds" },
+      { label: "Options", to: "/options" },
+      { label: "Multipliers", to: "/multipliers" },
+    ],
+  },
+  {
+    heading: "Markets",
+    links: [
+      { label: "Forex", to: "/forex" },
+      { label: "Derived Indices", to: "/derived-indices" },
+      { label: "Stocks", to: "/stocks" },
+      { label: "Commodities", to: "/commodities" },
+      { label: "Crypto", to: "/crypto" },
+    ],
+  },
+  {
+    heading: "Platforms",
+    links: [
+      { label: "SmartTrader", to: "/smarttrader" },
+      { label: "AutoTrade", to: "/autotrade" },
+      { label: "Economic Calendar", to: "/economic-calendar" },
+    ],
+  },
+  {
+    heading: "About",
+    links: [
+      { label: "Who we are", to: "/who-we-are" },
+      { label: "Why choose us", to: "/why-choose-us" },
+      { label: "Our principles", to: "/our-principles" },
+      { label: "Regulatory info", to: "/regulatory-info" },
+    ],
+  },
+  {
+    heading: "Learn",
+    links: [
+      { label: "Beginners guide", to: "/beginners-guide" },
+      { label: "Trading strategies", to: "/trading-strategies" },
+      { label: "Glossary", to: "/glossary" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Terms & conditions", to: "/terms-conditions" },
+      { label: "Privacy policy", to: "/" },
+      { label: "Cookie policy", to: "/" },
+    ],
+  },
 ]
+
+const logoSrc = "/images/logo3.png"
 
 export default function Footer() {
   return (
-    <footer style={{ background: "#050814", color: "#e8edf9" }}>
-      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "44px 24px 24px", display: "grid", gap: 30 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 28, alignItems: "start" }}>
-          <div style={{ display: "grid", gap: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #ff4f6f, #d13651)", display: "grid", placeItems: "center", color: "white", fontWeight: 800 }}>F</div>
-              <div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "white" }}>FortuNex</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.62)" }}>Trade simply, globally</div>
-              </div>
-            </div>
+    <footer style={{ background: "#0e0e1a", color: "#c2c9d6", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-              {socialLinks.map(({ icon: Icon, label, href }) => (
-                <a key={label} href={href} aria-label={label} style={{ width: 36, height: 36, borderRadius: 10, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.04)", color: "#c8d1ea", textDecoration: "none" }}>
-                  <Icon size={18} />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* ── Row 1: Logo | Socials ── */}
+      <div style={{
+        maxWidth: 1180, margin: "0 auto",
+        padding: "40px 28px 32px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: 20,
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+      }}>
+        {/* Logo */}
+        <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+          <img
+            src={logoSrc}
+            alt="FortuNex"
+            style={{ height: 36, width: "auto", objectFit: "contain", display: "block" }}
+            onError={(e) => {
+              e.target.style.display = "none"
+              e.target.parentElement.innerHTML = `<span style="font-size:22px;font-weight:800;color:white;letter-spacing:-0.5px">FortuNex</span>`
+            }}
+          />
+        </Link>
 
-        <div style={{ display: "grid", gap: 22 }}>
-          <div style={{ display: "grid", gap: 16, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 24 }}>
-            <p style={{ margin: 0, color: "rgba(255,255,255,0.74)", lineHeight: 1.8, fontSize: 14 }}>
-              This website may use automated translations for your convenience. However, the English version is the definitive version and will prevail in the event of any discrepancy.
-            </p>
-            <div style={{ display: "grid", gap: 8, color: "rgba(255,255,255,0.72)", fontSize: 13, lineHeight: 1.8 }}>
-              <p style={{ margin: 0 }}>FortuNex (FX) Ltd is licensed and regulated by the Labuan Financial Services Authority.</p>
-              <p style={{ margin: 0 }}>FortuNex (BVI) Ltd is licensed and regulated by the British Virgin Islands Financial Services Commission.</p>
-              <p style={{ margin: 0 }}>FortuNex Investments (Cayman) Limited, registered office at Campbells Corporate Services Limited, Floor 4, Willow House, Cricket Square, Grand Cayman, Cayman Islands, is regulated by the Cayman Islands Monetary Authority.</p>
-              <p style={{ margin: 0 }}>FortuNex (Mauritius) Ltd is regulated by the Financial Services Commission, Mauritius.</p>
-              <p style={{ margin: 0 }}>FortuNex (V) Ltd is licensed and regulated by the Vanuatu Financial Services Commission.</p>
-            </div>
-          </div>
-
-          <div style={{ borderRadius: 24, padding: 24, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.76)", marginBottom: 14 }}>
-              The products offered on our website are complex derivative products that carry a significant risk of potential loss. CFDs are complex instruments with a high risk of losing money rapidly due to leverage. You should consider whether you understand how these products work and whether you can afford to take the high risk of losing your money.
-            </p>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 18, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", fontSize: 13 }}>
-              <MessageCircle size={18} />
-              Trading involves risk and is not suitable for everyone.
-            </div>
-          </div>
+        {/* Social icons */}
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          {socialLinks.map(({ icon: Icon, label, href }) => (
+            <a
+              key={label}
+              href={href}
+              aria-label={label}
+              style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color 0.15s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "white" }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.55)" }}
+            >
+              <Icon size={20} />
+            </a>
+          ))}
         </div>
       </div>
+
+      {/* ── Row 2: Link columns grid ── */}
+      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "48px 28px 48px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="fx-footer-cols" style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(6, 1fr)",
+          gap: "32px 24px",
+        }}>
+          {footerCols.map((col) => (
+            <div key={col.heading} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <span style={{
+                fontSize: 13,
+                fontWeight: 700,
+                color: "white",
+                marginBottom: 4,
+              }}>
+                {col.heading}
+              </span>
+              {col.links.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  style={{
+                    fontSize: 14,
+                    color: "rgba(255,255,255,0.55)",
+                    textDecoration: "none",
+                    lineHeight: 1.5,
+                    transition: "color 0.15s",
+                  }}
+                  onMouseEnter={(e) => { e.target.style.color = "white" }}
+                  onMouseLeave={(e) => { e.target.style.color = "rgba(255,255,255,0.55)" }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Row 3: Regulatory text ── */}
+      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "36px 28px 40px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 24 }}>
+          {[
+            "FortuNex (FX) Ltd is licensed and regulated by the Labuan Financial Services Authority.",
+            "FortuNex (BVI) Ltd is licensed and regulated by the British Virgin Islands Financial Services Commission.",
+            "FortuNex Investments (Cayman) Limited, registered office at Campbells Corporate Services Limited, Floor 4, Willow House, Cricket Square, Grand Cayman, Cayman Islands, is regulated by the Cayman Islands Monetary Authority.",
+            "FortuNex (Mauritius) Ltd is regulated by the Financial Services Commission, Mauritius.",
+            "FortuNex (V) Ltd is licensed and regulated by the Vanuatu Financial Services Commission.",
+          ].map((text, i) => (
+            <p key={i} style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.9 }}>
+              {text}
+            </p>
+          ))}
+        </div>
+
+        {/* Risk warning box — matches Deriv's shaded block */}
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 8,
+          padding: "20px 24px",
+          marginBottom: 32,
+        }}>
+          <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.9 }}>
+            The products offered on our website are complex derivative products that carry a significant risk of potential loss. CFDs are complex instruments with a high risk of losing money rapidly due to leverage. You should consider whether you understand how these products work and whether you can afford to take the high risk of losing your money.
+          </p>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 12,
+          paddingTop: 24,
+          borderTop: "1px solid rgba(255,255,255,0.07)",
+        }}>
+          <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.3)" }}>
+            © {new Date().getFullYear()} FortuNex. All rights reserved.
+          </p>
+        </div>
+      </div>
+
+      {/* Responsive: collapse 6 cols → 3 → 2 */}
+      <style>{`
+        @media (max-width: 900px) {
+          .fx-footer-cols { grid-template-columns: repeat(3, 1fr) !important; }
+        }
+        @media (max-width: 540px) {
+          .fx-footer-cols { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
     </footer>
   )
 }

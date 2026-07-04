@@ -1,0 +1,36 @@
+<svg width="500" height="500" viewBox="0 0 500 500" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>FortuNex logo</title>
+  <desc>Geometric modern F in crimson, transparent background</desc>
+  <defs>
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b8a"/>
+      <stop offset="50%" stop-color="#ff4f6f"/>
+      <stop offset="100%" stop-color="#c93055"/>
+    </linearGradient>
+    <linearGradient id="darkFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c93055"/>
+      <stop offset="100%" stop-color="#8b1f38"/>
+    </linearGradient>
+    <linearGradient id="lightFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff8fa3"/>
+      <stop offset="100%" stop-color="#ff4f6f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Vertical stem -->
+  <polygon points="160,100 210,100 230,400 180,400" fill="url(#mainGrad)"/>
+  <polygon points="210,100 228,106 248,400 230,400" fill="url(#darkFace)" opacity="0.6"/>
+
+  <!-- Top bar -->
+  <polygon points="160,100 385,100 382,142 163,142" fill="url(#lightFace)"/>
+  <polygon points="163,142 382,142 379,158 166,158" fill="url(#darkFace)" opacity="0.5"/>
+  <polygon points="385,100 400,108 397,150 382,142" fill="url(#darkFace)" opacity="0.7"/>
+
+  <!-- Middle bar -->
+  <polygon points="174,248 340,248 337,286 177,286" fill="url(#mainGrad)"/>
+  <polygon points="177,286 337,286 334,300 180,300" fill="url(#darkFace)" opacity="0.5"/>
+  <polygon points="340,248 356,254 353,292 337,286" fill="url(#darkFace)" opacity="0.7"/>
+
+  <!-- Accent block bottom -->
+  <rect x="180" y="380" width="26" height="18" rx="0" fill="#ff4f6f" opacity="0.35"/>
+</svg>

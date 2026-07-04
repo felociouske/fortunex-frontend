@@ -30,7 +30,7 @@ export default function RegisterPage() {
   // /register?referral_code=4RAYY79S) -- the person who clicked the
   // link should never have to type or even see a code; it's silently
   // attached to their registration.
-  const referralCodeFromLink = searchParams.get("referral_code");
+  const referralCodeFromLink = searchParams.get("trade");
   useEffect(() => {
     if (referralCodeFromLink) {
       setForm((f) => ({ ...f, referral_code: referralCodeFromLink }));
@@ -208,41 +208,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Referral code -- hidden once auto-applied from a shared link;
-              only shown as a manual fallback when no link param is present. */}
-              {referralCodeFromLink ? (
-                <div className="rounded-lg bg-fx-surface2 px-4 py-3 text-sm text-fx-text-dim">
-                  You're signing up via a referral link — referral code{" "}
-                  <span className="text-fx-teal font-semibold">{referralCodeFromLink}</span> will be applied automatically.
-                </div>
-              ) : (
-                <div>
-                  <label className="input-label">Referral code <span className="text-fx-muted normal-case">(optional)</span></label>
-                  <input
-                    type="text" name="referral_code" value={form.referral_code} onChange={set}
-                    placeholder="Enter referral code" className="input-field"
-                  />
-                </div>
-              )}
-
               <button type="submit" className="btn-teal">Next</button>
-
-              {/* Social sign up */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-fx-border" />
-                <span className="text-fx-muted text-xs">or</span>
-                <div className="flex-1 h-px bg-fx-border" />
-              </div>
-
-              {[
-                { label: "Sign up with Google",   icon: "G", color: "#EA4335" },
-                { label: "Sign up with Facebook",  icon: "f", color: "#1877F2" },
-              ].map(({ label, icon, color }) => (
-                <button key={label} type="button" className="btn-outline flex items-center justify-center gap-3 text-sm">
-                  <span className="font-bold text-base" style={{ color }}>{icon}</span>
-                  {label}
-                </button>
-              ))}
             </form>
           )}
 
