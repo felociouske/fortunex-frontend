@@ -14,7 +14,6 @@ import {
   MessageCircle,
   User,
   TrendingUp,
-  Bot,
   Briefcase,
   LogOut,
 } from "lucide-react";
@@ -27,13 +26,12 @@ import NotificationDropdown from "./NotificationDropdown";
 // ---------------------------------------------------------------------------
 
 const platforms = [
-  { abbr: "FT", label: "FortuNex Trader", color: "#e8404a", path: "/dashboard" },
-  { abbr: "FB", label: "FortuNex Bots",   color: "#e8404a", path: "/bots" },
+  { abbr: "FT", label: "FortuNex AIs",  color: "#e8404a", path: "/bots" },
+  { abbr: "FB", label: "FortuNex Bots", color: "#e8404a", path: "/bots" },
 ];
 
 const navLinks = [
   { label: "Trader's Hub",     path: "/landing",           icon: Home },
-  { label: "Bots & AI",        path: "/bots",              icon: Bot },
   { label: "Cashier",          path: "/cashier?tab=deposit", icon: Wallet },
   { label: "Fortunex Trader",  path: "/dashboard",         icon: FileText },
   { label: "Statements",       path: "/transactions",      icon: FileText },
@@ -43,10 +41,9 @@ const navLinks = [
 const mobileMenuItems = [
   { label: "Trader's Hub",     path: "/landing",              icon: Home,        chevron: false, external: false },
   { label: "Trade",            path: "/dashboard",                icon: TrendingUp,  chevron: false, external: false },
-  { label: "Bots & AIs", path: "/bots",             icon: User,        chevron: true,  external: false },
   { label: "History", path: "/history",             icon: User,        chevron: true,  external: false },
-  { label: "Reports",          path: "/dashboard",              icon: FileText,    chevron: true,  external: false },
-  { label: "Account settings", path: "/dashboard",             icon: User,        chevron: true,  external: false },
+  { label: "Statements",       path: "/transactions",         icon: FileText,    chevron: true,  external: false },
+  { label: "Profile",          path: "/profile",              icon: User,        chevron: true,  external: false },
   { label: "Cashier",          path: "/cashier?tab=deposit",  icon: Wallet,      chevron: true,  external: false },
 ];
 
@@ -135,6 +132,7 @@ function USFlagCircle({ size = 28 }) {
 function PlatformSwitcher({ activePlatform, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = (e) => {
@@ -169,7 +167,7 @@ function PlatformSwitcher({ activePlatform, onChange }) {
           {platforms.map((p) => (
             <button
               key={p.abbr}
-              onClick={() => { onChange(p); setOpen(false); }}
+              onClick={() => { onChange(p); setOpen(false); navigate(p.path); }}
               className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 hover:bg-white/5"
             >
               <PlatformIcon abbr={p.abbr} color={p.color} />
@@ -214,6 +212,7 @@ function MobileMenu({ open, onClose, activePlatform, onPlatformChange, balance }
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const [darkTheme, setDarkTheme] = useState(true);
+  const [platformOpen, setPlatformOpen] = useState(false);
 
   const go = (path, external) => {
     onClose();
@@ -222,6 +221,13 @@ function MobileMenu({ open, onClose, activePlatform, onPlatformChange, balance }
     } else {
       navigate(path);
     }
+  };
+
+  const selectPlatform = (p) => {
+    onPlatformChange(p);
+    setPlatformOpen(false);
+    onClose();
+    navigate(p.path);
   };
 
   const handleLogout = () => {
@@ -259,7 +265,7 @@ function MobileMenu({ open, onClose, activePlatform, onPlatformChange, balance }
             >
               <X size={18} />
             </button>
-            <span className="text-fx-text font-bold text-base">Menu</span>
+            <span className="text-fx-text text-base">Menu</span>
           </div>
           {/* EN flag badge */}
           <div className="flex items-center gap-1.5">
@@ -268,16 +274,44 @@ function MobileMenu({ open, onClose, activePlatform, onPlatformChange, balance }
         </div>
 
         {/* Platform switcher row */}
-        <div className="px-5 py-4 border-b border-fx-border">
-          <div className="flex items-center gap-3">
+        <div className="border-b border-fx-border">
+          <button
+            onClick={() => setPlatformOpen((v) => !v)}
+            className="w-full px-5 py-4 flex items-center gap-3 text-left transition-colors duration-150 hover:bg-white/5"
+          >
             <PlatformIcon abbr={activePlatform.abbr} color={activePlatform.color} size={32} />
             <div>
               <p className="text-fx-text text-sm font-semibold leading-none">
                 {activePlatform.label.replace("FortuNex ", "")}
               </p>
             </div>
-            <ChevronDown size={14} className="text-fx-text-dim ml-auto" />
-          </div>
+            <ChevronDown
+              size={14}
+              className="text-fx-text-dim ml-auto transition-transform duration-200"
+              style={{ transform: platformOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+            />
+          </button>
+
+          {platformOpen && (
+            <div className="pb-2">
+              {platforms.map((p) => (
+                <button
+                  key={p.abbr}
+                  onClick={() => selectPlatform(p)}
+                  className="w-full flex items-center gap-3 pl-9 pr-5 py-2.5 text-left transition-colors duration-150 hover:bg-white/5"
+                >
+                  <PlatformIcon abbr={p.abbr} color={p.color} size={26} />
+                  <span className="text-fx-text text-sm">{p.label}</span>
+                  {p.abbr === activePlatform.abbr && (
+                    <span
+                      className="ml-auto w-1.5 h-1.5 rounded-full"
+                      style={{ background: "#00c2b2" }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Nav items */}

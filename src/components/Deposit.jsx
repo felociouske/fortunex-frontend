@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { cashierAPI } from "../api/cashier";
-import AmountInput from "../pages/cashier/AmountInput";
 
 /**
  * Floating quick-deposit popover, triggered from the navbar's Deposit
@@ -111,7 +110,6 @@ export default function Deposit({ open, onClose, anchorRef }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <AmountInput amount={amount} onChange={setAmount} currency="USD" />
 
           {error && <div className="text-fx-red text-xs">{error}</div>}
           {message && <div className="text-fx-teal text-xs">{message}</div>}

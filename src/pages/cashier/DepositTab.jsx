@@ -31,22 +31,22 @@ export default function DepositTab() {
         <button
           type="button"
           onClick={() => setMethod("mpesa")}
-          className="px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2"
+          className="px-4 py-2 text-sm font-medium border flex items-center gap-2"
           style={method === "mpesa"
             ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
             : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
         >
-          <Smartphone size={16} /> M-Pesa (instant)
+          M-Pesa (instant)
         </button>
         <button
           type="button"
           onClick={() => setMethod("manual")}
-          className="px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2"
+          className="px-4 py-2 text-sm font-medium border flex items-center gap-2"
           style={method === "manual"
             ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
             : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
         >
-          <Smartphone size={16} /> M-Pesa (manual)
+          M-Pesa (manual)
         </button>
       </div>
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { cashierAPI } from "../../api/cashier";
 import AccountBanner from "./AccountBanner";
-import AmountInput from "./AmountInput";
 
 export default function WithdrawalTab() {
   const [amount, setAmount] = useState("");
@@ -63,7 +62,6 @@ export default function WithdrawalTab() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
-        <AmountInput amount={amount} onChange={setAmount} currency={currency} />
         {/* Your wallet is always USD internally -- this just shows what
             that translates to in KES, since withdrawals are still paid
             out manually by an admin (M-Pesa payout automation isn't

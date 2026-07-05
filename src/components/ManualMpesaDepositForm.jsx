@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { cashierAPI } from "../api/cashier";
-import AmountInput from "../pages/cashier/AmountInput";
 
 /**
  * Manual M-Pesa deposit: user pays via the Paybill directly through
@@ -70,7 +69,6 @@ export default function ManualMpesaDepositForm() {
 
   return (
     <div className="max-w-md space-y-6">
-      <AmountInput amount={amount} onChange={setAmount} currency="USD" />
 
       {/* Payment instructions -- appear once we know how much to pay in KES */}
       {paybill && (

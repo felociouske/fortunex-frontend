@@ -22,25 +22,20 @@ const optionPlatforms = [
   {
     name: "Fortunex Trader",
     desc: "The options and multipliers trading platform.",
+    to: "/dashboard",
   },
   {
     name: "Fortunex Bots",
     desc: "The ultimate bot trading platform.",
+    to: "/bots",
   },
   {
     name: "Fortunex AI",
     desc: "The legacy options trading platform.",
+    to: "/bots",
   },
 ];
 
-const mt5Accounts = [
-  { name: "Standard", desc: "CFDs on derived and financial instruments.", tag: null },
-  { name: "Financial", desc: "CFDs on financial instruments.", tag: null },
-  { name: "Financial STP", desc: "Direct access to market prices.", tag: null },
-  { name: "Swap-Free", desc: "Swap-free CFDs on selected instruments.", tag: null },
-  { name: "Zero Spread", desc: "Zero spread CFDs on financial and derived instruments.", tag: null },
-  { name: "Gold", desc: "Trading opportunities on popular precious metals.", tag: "NEW" },
-];
 
 const ctraderPlatforms = [
   { name: "Fortunex cTrader", desc: "CFDs on financial and derived instruments." },
@@ -55,9 +50,9 @@ function PlatformRow({ platform, actionLabel = "Open", to = "/dashboard" }) {
     <div className="flex items-center gap-4 py-3.5 border-b border-fx-border last:border-0">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-fx-text text-sm font-semibold">{platform.name}</p>
+          <p className="text-fx-text text-sm">{platform.name}</p>
           {platform.tag && (
-            <span className="text-[10px] font-bold bg-yellow-400 text-black px-1.5 py-0.5 rounded">
+            <span className="text-[10px] bg-yellow-400 text-black px-1.5 py-0.5 rounded">
               {platform.tag}
             </span>
           )}
@@ -66,7 +61,7 @@ function PlatformRow({ platform, actionLabel = "Open", to = "/dashboard" }) {
       </div>
       <Link
         to={to}
-        className="flex-shrink-0 flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-xs font-semibold transition-all duration-200 bg-fx-red hover:bg-fx-red-dk whitespace-nowrap"
+        className="flex-shrink-0 flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-xs transition-all duration-200 bg-fx-red hover:bg-fx-red-dk whitespace-nowrap"
       >
         {actionLabel}
         <ArrowUpRight size={12} />
@@ -102,14 +97,14 @@ function DepositBanner() {
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-fx-text text-xl sm:text-2xl font-semibold mb-1">
+          <h2 className="text-fx-text text-xl sm:text-2xl mb-1">
             Make your first deposit to start trading
           </h2>
           <p className="text-fx-text-dim text-sm">Fund your account and access all trading platforms.</p>
         </div>
         <Link
           to="/cashier?tab=deposit"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-white font-bold text-sm transition-all duration-200 bg-fx-red hover:bg-fx-red-dk whitespace-nowrap self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-white text-sm transition-all duration-200 bg-fx-red hover:bg-fx-red-dk whitespace-nowrap self-start sm:self-auto"
         >
           Deposit now
           <ArrowUpRight size={14} />
@@ -129,21 +124,21 @@ function OptionsSection({ balance = 0 }) {
       {/* Header */}
       <div className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-fx-border">
         <div>
-          <h3 className="text-fx-text text-base font-bold mb-0.5">Options</h3>
+          <h3 className="text-fx-text text-base mb-0.5">Options</h3>
           <p className="text-fx-text-dim text-sm">
             Predict the market, profit if you're right, risk only what you put in.
           </p>
         </div>
         <div className="flex items-center gap-3 self-start sm:self-auto">
           <div className="text-right">
-            <p className="text-fx-teal text-sm font-bold leading-tight">
+            <p className="text-fx-teal text-sm leading-tight">
               {formatBalance(balance)} USD
             </p>
             <p className="text-fx-text-dim text-xs">Account balance</p>
           </div>
           <Link
             to="/cashier?tab=deposit"
-            className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold bg-fx-red hover:bg-fx-red-dk transition-colors duration-200"
+            className="px-3 py-1.5 rounded-lg text-white text-xs bg-fx-red hover:bg-fx-red-dk transition-colors duration-200"
           >
             Deposit
           </Link>
@@ -153,50 +148,13 @@ function OptionsSection({ balance = 0 }) {
       {/* Platforms */}
       <div className="px-5 divide-y divide-fx-border">
         {optionPlatforms.map((p, i) => (
-          <PlatformRow key={i} platform={p} actionLabel="Open" to="/dashboard" />
+          <PlatformRow key={i} platform={p} actionLabel="Open" to={p.to} />
         ))}
       </div>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// CFDs Section
-// ---------------------------------------------------------------------------
-
-function CFDsSection() {
-  return (
-    <div className="rounded-xl border mb-4 bg-fx-surface border-fx-border">
-      {/* Header */}
-      <div className="p-5 border-b border-fx-border">
-        <div className="flex items-center gap-3 mb-1 flex-wrap">
-          <h3 className="text-fx-text text-base font-bold">CFDs</h3>
-        </div>
-        <p className="text-fx-text-dim text-sm">
-          Trade bigger positions with less capital on a wide range of global markets.{" "}
-        </p>
-      </div>
-
-      <div className="p-5">
-        {/* MT5 */}
-        <h4 className="text-fx-text text-sm font-bold mb-2">Fortunex MT5</h4>
-        <div className="divide-y divide-fx-border">
-          {mt5Accounts.map((acc, i) => (
-            <PlatformRow key={i} platform={acc} actionLabel="Get" to="/#" />
-          ))}
-        </div>
-
-        {/* cTrader */}
-        <h4 className="text-fx-text text-sm font-bold mt-6 mb-2">Fortunex cTrader</h4>
-        <div className="divide-y divide-fx-border">
-          {ctraderPlatforms.map((p, i) => (
-            <PlatformRow key={i} platform={p} actionLabel="Get" to="/#" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Header
@@ -208,7 +166,7 @@ function TradersHubHeader({ totalBalance }) {
       <h1 className="text-fx-text text-2xl font-bold">Trader's Hub</h1>
       <div className="sm:text-right">
         <p className="text-fx-text-dim text-xs mb-0.5">Total assets</p>
-        <p className="text-fx-teal text-2xl font-bold tracking-tight">
+        <p className="text-fx-teal text-2xl tracking-tight">
           {formatBalance(totalBalance)} USD
         </p>
       </div>
@@ -235,7 +193,6 @@ export default function TradersHub() {
         <DepositBanner />
         <TradersHubHeader totalBalance={balance} />
         <OptionsSection balance={balance} />
-        <CFDsSection />
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const TABS = [
   { key: "withdrawal", label: "Withdrawal", icon: Banknote },
   { key: "payment-agents", label: "Payment agents", icon: Handshake },
   { key: "transfer", label: "Transfer", icon: ArrowLeftRight },
-  { key: "p2p", label: "Deriv P2P", icon: Users },
+  { key: "p2p", label: "Fortunex P2P", icon: Users },
 ];
 
 export default function Cashier() {
@@ -69,7 +69,7 @@ export default function Cashier() {
       <DashboardNavbar />
 
       <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-        <h1 className="text-center text-2xl sm:text-3xl font-semibold mb-8">Cashier</h1>
+        <h1 className="text-center text-2xl sm:text-3xl mb-8">Cashier</h1>
 
         <div className="rounded-2xl border border-fx-border bg-fx-surface overflow-hidden">
           <div className="flex flex-col md:flex-row">

@@ -33,7 +33,6 @@ import Stocks from "./pages/index/Stocks.jsx";
 import TermsConditions from "./pages/index/TermsConditions.jsx";
 import TradingStrategies from "./pages/index/TradingStrategies.jsx";
 import WhoWeAre from "./pages/index/WhoWeAre.jsx";
-import WhyChooseUs from "./pages/index/WhyChooseUs.jsx";
 import KycPage     from "./pages/kyc/kyc.jsx";
 import Bots        from "./pages/bots/Bots.jsx";
 import NotificationsPage from "./pages/notifications/NotificationsPage.jsx";
@@ -95,13 +94,12 @@ export default function App() {
           <Route path="/trading-strategies" element={<TradingStrategies />} />
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/who-we-are" element={<WhoWeAre />} />
-          <Route path="/why-choose-us" element={<WhyChooseUs />} />
           <Route path="/our-principles" element={<OurPrinciples />} />
           <Route path="/regulatory-info" element={<RegulatoryInfo />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-          
+
 
           {/* Protected */}
           <Route path="/landing"    element={<PrivateRoute><LandingPage /></PrivateRoute>} />

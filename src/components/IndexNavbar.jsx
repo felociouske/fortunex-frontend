@@ -47,7 +47,6 @@ const navItems = [
           heading: "Company",
           links: [
             { label: "Who we are", to: "/who-we-are" },
-            { label: "Why choose us", to: "/why-choose-us" },
             { label: "Our principles", to: "/our-principles" },
           ],
         },
