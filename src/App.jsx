@@ -39,6 +39,7 @@ import Bots        from "./pages/bots/Bots.jsx";
 import NotificationsPage from "./pages/notifications/NotificationsPage.jsx";
 import KYCPromptModal from "./components/KYCPromptModal.jsx";
 import Transactions from "./pages/transactions/Transactions.jsx";
+import History from "./pages/history/History.jsx";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,7 @@ export default function App() {
           {/* Protected */}
           <Route path="/landing"    element={<PrivateRoute><LandingPage /></PrivateRoute>} />
           <Route path="/dashboard"  element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
           <Route path="/trade"      element={<PrivateRoute><TradePage /></PrivateRoute>} />
           <Route path="/marketplace" element={<PrivateRoute><Marketplace /></PrivateRoute>} />
           <Route path="/profile"    element={<PrivateRoute><Profile /></PrivateRoute>} />

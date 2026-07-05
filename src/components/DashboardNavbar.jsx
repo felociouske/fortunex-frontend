@@ -37,6 +37,7 @@ const navLinks = [
   { label: "Cashier",          path: "/cashier?tab=deposit", icon: Wallet },
   { label: "Fortunex Trader",  path: "/dashboard",         icon: FileText },
   { label: "Statements",       path: "/transactions",      icon: FileText },
+  { label: "History",          path: "/history",           icon: FileText },
 ];
 
 const mobileMenuItems = [
