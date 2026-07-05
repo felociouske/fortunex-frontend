@@ -5,14 +5,20 @@ import { Sparkles, TrendingUp, TrendingDown, Minus, Target, Radar as RadarIcon, 
 /**
  * Rule based market commentary, styled to look like a live AI analysis
  * feed. For you, not the user: this is still not a real ML or LLM
- * model, it is deterministic tick math, broken out per contract type
- * so it does not reuse the same three outcomes everywhere, wrapped in
- * a fake thinking animation, and able to show its own reasoning when
- * tapped so it feels transparent rather than a black box.
+ * model, it is deterministic tick math, broken out per contract type,
+ * wrapped in a fake thinking animation, with a reasoning drawer.
  *
- * Desktop renders as a card meant to sit in a side column next to your
- * chart. Mobile renders as a fixed bar pinned to the top, dismissible
- * by tap or swipe up, reappearing on the next analysis cycle.
+ * Three phases, not two:
+ *   "analysing" -> the cosmetic 4 second thinking timer is running
+ *   "waiting"   -> the timer finished but there were not yet enough
+ *                  live ticks to analyse (this is the state the
+ *                  previous version was missing, which is what caused
+ *                  the blank headline and lone percent sign bug)
+ *   "result"    -> a real, fully populated result is ready to show
+ *
+ * The component only ever shows result fields while phase is exactly
+ * "result", and phase only ever becomes "result" alongside a real,
+ * non null result, set together in the same function.
  */
 
 const STATUS_LINES = [
@@ -23,22 +29,52 @@ const STATUS_LINES = [
   "Finalising prediction",
 ];
 
+const WAITING_LINE = "Waiting for enough live tick data";
 const ANALYSIS_DURATION_MS = 4000;
 const AUTO_REFRESH_MS = 45000;
 
 export default function AIAdvisory({ ticks, aiName, contractType, prediction, side }) {
-  const [phase, setPhase] = useState("analysing"); // "analysing" then "result"
+  const [phase, setPhase] = useState("analysing");
   const [statusIndex, setStatusIndex] = useState(0);
   const [result, setResult] = useState(null);
   const [dismissed, setDismissed] = useState(false);
   const [showReasons, setShowReasons] = useState(false);
 
-  // A cycle id guards against a stale setTimeout from a previous
-  // contract selection overwriting a newer result if the user switches
-  // fast enough that two cycles overlap in flight.
+  // ticks changes constantly as new prices stream in. If we read the
+  // `ticks` prop from inside a setTimeout callback, that callback
+  // closes over whatever `ticks` was AT THE MOMENT THE TIMER WAS
+  // STARTED, four seconds earlier, not the current value. A ref
+  // sidesteps that: it is updated every render, so reading
+  // ticksRef.current inside a callback always gets the latest ticks,
+  // not a four second old snapshot.
+  const ticksRef = useRef(ticks);
+  useEffect(() => {
+    ticksRef.current = ticks;
+  }, [ticks]);
+
+  // A cycle id guards against a stale timer from a previous contract
+  // selection resolving after a newer one has already started, which
+  // could otherwise overwrite a fresh result with a stale one.
   const cycleIdRef = useRef(0);
   const timeoutRef = useRef(null);
   const statusIntervalRef = useRef(null);
+
+  // Tries to produce a result RIGHT NOW using the latest ticks. Used
+  // both when the 4 second timer fires, and again immediately whenever
+  // new ticks arrive while we are stuck in "waiting."
+  const attemptResolve = (cycleId) => {
+    if (cycleIdRef.current !== cycleId) return; // a newer cycle already started, this one is stale
+    const analysis = analyseForContract(ticksRef.current, contractType, prediction, side);
+    if (analysis) {
+      clearInterval(statusIntervalRef.current);
+      setResult(analysis);
+      setPhase("result");
+    } else {
+      // Not enough data yet. Stay visibly honest about why, instead of
+      // silently showing a half filled result.
+      setPhase("waiting");
+    }
+  };
 
   const runAnalysisCycle = () => {
     const thisCycle = ++cycleIdRef.current;
@@ -52,26 +88,32 @@ export default function AIAdvisory({ ticks, aiName, contractType, prediction, si
     }, ANALYSIS_DURATION_MS / STATUS_LINES.length);
 
     clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      if (cycleIdRef.current !== thisCycle) return; // a newer cycle already started, drop this stale one
-      clearInterval(statusIntervalRef.current);
-      setResult(analyseForContract(ticks, contractType, prediction, side));
-      setPhase("result");
-    }, ANALYSIS_DURATION_MS);
+    timeoutRef.current = setTimeout(() => attemptResolve(thisCycle), ANALYSIS_DURATION_MS);
   };
 
-  // Re-trigger whenever the user changes contract type, prediction, or side.
+  // Re-trigger a full new cycle whenever the user changes contract type, prediction, or side.
   useEffect(() => {
     runAnalysisCycle();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contractType, JSON.stringify(prediction), side]);
 
-  // Also re-trigger on a fixed timer regardless of user action, so it feels like a live feed.
+  // Also re-trigger a full new cycle on a fixed timer, so it feels like a live feed.
   useEffect(() => {
     const id = setInterval(runAnalysisCycle, AUTO_REFRESH_MS);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // While stuck in "waiting," retry the instant new ticks arrive,
+  // rather than guessing at a retry delay. This does nothing while
+  // phase is "analysing" (the cosmetic timer is still the one in
+  // charge) or "result" (nothing to retry).
+  useEffect(() => {
+    if (phase === "waiting") {
+      attemptResolve(cycleIdRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticks]);
 
   // Clean up any pending timers if the component unmounts mid cycle.
   useEffect(() => {
@@ -81,12 +123,14 @@ export default function AIAdvisory({ ticks, aiName, contractType, prediction, si
     };
   }, []);
 
+  const statusLine = phase === "waiting" ? WAITING_LINE : STATUS_LINES[statusIndex];
+
   return (
     <>
       <div className="hidden md:block">
         <AdvisoryCard
           phase={phase}
-          statusLine={STATUS_LINES[statusIndex]}
+          statusLine={statusLine}
           result={result}
           aiName={aiName}
           onOpenReasons={() => setShowReasons(true)}
@@ -96,7 +140,7 @@ export default function AIAdvisory({ ticks, aiName, contractType, prediction, si
       <div className="md:hidden">
         <MobileBar
           phase={phase}
-          statusLine={STATUS_LINES[statusIndex]}
+          statusLine={statusLine}
           result={result}
           aiName={aiName}
           dismissed={dismissed}
@@ -106,16 +150,18 @@ export default function AIAdvisory({ ticks, aiName, contractType, prediction, si
       </div>
 
       {/*
-        Rendered through a portal straight into document.body rather
-        than inline here. A plain "fixed inset-0" overlay stops covering
-        the real viewport the moment any ancestor element has a CSS
-        transform, filter, or similar property set, which is common in
-        chart library wrappers (TradingView widgets do this often).
-        A portal sidesteps the whole problem by attaching outside the
-        component tree entirely, so it is immune to whatever the parent
-        layout does.
+        Rendered through a portal straight into document.body. A plain
+        "fixed inset-0" overlay stops covering the real viewport the
+        moment any ancestor element has a CSS transform, filter, or
+        similar property, which is common in chart library wrappers. A
+        portal sidesteps that by attaching outside the component tree.
+
+        Gated on `phase === "result" && result` together, not just
+        `result` alone, so a leftover result object from a previous
+        cycle can never be opened while a newer cycle is still
+        analysing or waiting.
       */}
-      {showReasons && result && createPortal(
+      {showReasons && phase === "result" && result && createPortal(
         <ReasonModal aiName={aiName} result={result} onClose={() => setShowReasons(false)} />,
         document.body
       )}
@@ -123,7 +169,7 @@ export default function AIAdvisory({ ticks, aiName, contractType, prediction, si
   );
 }
 
-/* Radar sweep visual, shared by both layouts */
+/* Radar sweep visual, shared by both layouts and both "analysing" and "waiting" phases */
 function RadarSweep({ size = 64 }) {
   return (
     <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
@@ -138,8 +184,6 @@ function RadarSweep({ size = 64 }) {
         </div>
         <RadarIcon size={size * 0.32} className="text-fx-teal relative z-10" />
       </div>
-      {/* Scoped keyframes, kept local to this component rather than
-          touching the global stylesheet since nothing else needs them. */}
       <style>{`
         .radar-pulse {
           border: 1px solid rgba(0,194,178,0.4);
@@ -170,7 +214,7 @@ function RadarSweep({ size = 64 }) {
   );
 }
 
-/* Circular confidence ring, reads clearer at a glance than plain text */
+/* Circular confidence ring */
 function ConfidenceRing({ value, size = 46 }) {
   const stroke = 4;
   const radius = (size - stroke) / 2;
@@ -202,10 +246,12 @@ function ResultIcon({ direction, size = 16 }) {
   return <Icon size={size} style={{ color }} className="flex-shrink-0" />;
 }
 
-/* Desktop card. Sizes to its own content instead of assuming a parent
-   gives it an explicit height, so it still displays fully even inside
-   a grid column that does not stretch it. */
+/* Desktop card. Explicitly branches on phase, "result" only ever
+   renders when `result` is also non null, by construction upstream,
+   but the check stays here too as a second line of defense. */
 function AdvisoryCard({ phase, statusLine, result, aiName, onOpenReasons }) {
+  const showResult = phase === "result" && result;
+
   return (
     <div
       className="rounded-2xl border p-5 flex flex-col"
@@ -218,8 +264,8 @@ function AdvisoryCard({ phase, statusLine, result, aiName, onOpenReasons }) {
       <p className="text-fx-text-dim text-xs mb-5">Live market analysis</p>
 
       <div className="flex flex-col items-center text-center gap-4 py-2">
-        {phase === "analysing" ? (
-          <div key="analysing" className="fx-fade-in flex flex-col items-center gap-4">
+        {!showResult ? (
+          <div key="thinking" className="fx-fade-in flex flex-col items-center gap-4">
             <RadarSweep size={72} />
             <div>
               <p className="text-fx-text text-sm font-medium">Analysing the market</p>
@@ -227,40 +273,41 @@ function AdvisoryCard({ phase, statusLine, result, aiName, onOpenReasons }) {
             </div>
           </div>
         ) : (
-          result && (
-            <div key="result" className="w-full text-left fx-fade-in">
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2">
-                  <ResultIcon direction={result.direction} />
-                  <p className="text-fx-text text-sm font-semibold">{result.headline}</p>
-                </div>
-                <ConfidenceRing value={result.confidence} />
+          <div key="result" className="w-full text-left fx-fade-in">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <ResultIcon direction={result.direction} />
+                <p className="text-fx-text text-sm font-semibold">{result.headline}</p>
               </div>
-              <p className="text-fx-text-dim text-xs leading-relaxed mb-4">{result.detail}</p>
-
-              <button
-                onClick={onOpenReasons}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150"
-                style={{ background: "rgba(0,194,178,0.08)", color: "#00c2b2" }}
-              >
-                See why
-                <ChevronRight size={14} />
-              </button>
-
-              <div className="flex items-center justify-between text-xs pt-3 mt-3 border-t" style={{ borderColor: "#2a2a3d" }}>
-                <span className="text-fx-text-dim">{result.dataPoints} ticks analysed</span>
-              </div>
+              <ConfidenceRing value={result.confidence} />
             </div>
-          )
+            <p className="text-fx-text-dim text-xs leading-relaxed mb-4">{result.detail}</p>
+
+            <button
+              onClick={onOpenReasons}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150"
+              style={{ background: "rgba(0,194,178,0.08)", color: "#00c2b2" }}
+            >
+              See why
+              <ChevronRight size={14} />
+            </button>
+
+            <div className="flex items-center justify-between text-xs pt-3 mt-3 border-t" style={{ borderColor: "#2a2a3d" }}>
+              <span className="text-fx-text-dim">{result.dataPoints} ticks analysed</span>
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-/* Mobile floating bar, pinned to the top of the viewport */
+/* Mobile floating bar. Same showResult guard as the desktop card,
+   this is what actually fixes the blank headline and lone percent
+   sign you saw, that branch simply cannot be entered without a real result now. */
 function MobileBar({ phase, statusLine, result, aiName, dismissed, onDismiss, onOpenReasons }) {
   const touchStartY = useRef(null);
+  const showResult = phase === "result" && result;
 
   const handleTouchStart = (e) => {
     touchStartY.current = e.touches[0].clientY;
@@ -268,7 +315,7 @@ function MobileBar({ phase, statusLine, result, aiName, dismissed, onDismiss, on
   const handleTouchMove = (e) => {
     if (touchStartY.current === null) return;
     const delta = touchStartY.current - e.touches[0].clientY;
-    if (delta > 40) onDismiss(); // swiped up far enough, dismiss
+    if (delta > 40) onDismiss();
   };
 
   if (dismissed) return null;
@@ -282,27 +329,27 @@ function MobileBar({ phase, statusLine, result, aiName, dismissed, onDismiss, on
     >
       <div
         className="flex items-center gap-3 px-3 py-2.5"
-        onClick={() => phase === "result" && onOpenReasons()}
-        role={phase === "result" ? "button" : undefined}
+        onClick={() => showResult && onOpenReasons()}
+        role={showResult ? "button" : undefined}
       >
-        {phase === "analysing" ? (
+        {!showResult ? (
           <RadarSweep size={36} />
         ) : (
-          <div className="flex-shrink-0"><ResultIcon direction={result?.direction} /></div>
+          <div className="flex-shrink-0"><ResultIcon direction={result.direction} /></div>
         )}
 
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-fx-text truncate">{aiName}</p>
-          {phase === "analysing" ? (
+          {!showResult ? (
             <p className="text-fx-text-dim text-[11px] truncate">{statusLine}</p>
           ) : (
-            <p className="text-fx-text-dim text-[11px] truncate">{result?.headline}, tap for reasons</p>
+            <p className="text-fx-text-dim text-[11px] truncate">{result.headline}, tap for reasons</p>
           )}
         </div>
 
-        {phase === "result" && (
+        {showResult && (
           <span className="text-[11px] font-semibold flex-shrink-0" style={{ color: "#00c2b2" }}>
-            {result?.confidence}%
+            {result.confidence}%
           </span>
         )}
 
@@ -317,8 +364,8 @@ function MobileBar({ phase, statusLine, result, aiName, dismissed, onDismiss, on
   );
 }
 
-/* Reasoning modal, opened by tapping the result on either layout.
-   Rendered via a portal by the parent component, see the comment there. */
+/* Reasoning modal, only ever mounted (via the portal check above) when
+   a real result exists, so no null checks needed inside it. */
 function ReasonModal({ aiName, result, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 px-0 sm:px-4">
@@ -346,9 +393,6 @@ function ReasonModal({ aiName, result, onClose }) {
 
         <p className="text-fx-text-dim text-xs leading-relaxed mb-5">{result.detail}</p>
 
-        {/* Digit frequency chart, only present for digit based contracts
-            (Even/Odd, Over/Under, Matches/Differs). Trend based contracts
-            do not have a digitBreakdown, so this block just does not render for them. */}
         {result.digitBreakdown && (
           <div className="mb-5">
             <p className="text-fx-text text-xs font-medium mb-2">Last digit frequency, most recent 20 ticks</p>
@@ -375,7 +419,6 @@ function ReasonModal({ aiName, result, onClose }) {
           </div>
         )}
 
-        {/* Labeled reasoning breakdown, always present regardless of contract type */}
         <div className="space-y-2">
           <p className="text-fx-text text-xs font-medium mb-1">What the model looked at</p>
           {result.reasons.map((reason, i) => (
@@ -394,11 +437,7 @@ function ReasonModal({ aiName, result, onClose }) {
   );
 }
 
-/* Analysis engine. Each contract type gets its own function since they
-   genuinely bet on different things (price direction versus last digit
-   parity versus digit frequency), so reusing one generic calculation
-   for all of them would produce answers that do not match what the
-   contract actually settles on. */
+/* Analysis engine, unchanged logic from before, this part was never the bug */
 
 function analyseForContract(ticks, contractType, prediction, side) {
   if (!ticks || ticks.length < 8) return null;
@@ -421,8 +460,6 @@ function analyseForContract(ticks, contractType, prediction, side) {
   }
 }
 
-// Shared by Rise/Fall and Higher/Lower, both genuinely care about
-// directional price movement rather than digit patterns.
 function trendSignal(prices) {
   const first = prices[0];
   const last = prices[prices.length - 1];
@@ -430,21 +467,15 @@ function trendSignal(prices) {
   const diffs = prices.slice(1).map((p, i) => Math.abs(p - prices[i]));
   const avgStep = diffs.reduce((a, b) => a + b, 0) / diffs.length;
   const volatilityPct = avgStep > 0 ? (avgStep / first) * 100 : 0;
-  // Net move relative to typical step size, a scale adaptive way to
-  // tell a real trend apart from ordinary tick noise.
   const signal = volatilityPct > 0 ? netChangePct / (volatilityPct * Math.sqrt(prices.length)) : 0;
   return { signal, volatilityPct, netChangePct, last, avgStep };
 }
 
-// This is genuinely what Even/Odd, Over/Under and Matches/Differs
-// contracts settle on in real synthetic indices trading.
 function lastDigit(price) {
   const str = price.toFixed(2).replace(".", "");
   return Number(str[str.length - 1]);
 }
 
-// Cosmetic clamp so the shown confidence never claims false certainty
-// (caps at 92%) while still looking like a real model output (floors at 55%).
 function confidenceFromStrength(strength) {
   return Math.min(92, Math.max(55, Math.round(55 + strength * 37)));
 }
@@ -490,8 +521,6 @@ function analyseRiseFall(prices) {
 
 function analyseHigherLower(prices) {
   const { signal, volatilityPct, last, avgStep } = trendSignal(prices);
-  // Barrier offset scaled to recent volatility, a barrier tighter than
-  // the typical tick step would be trivially hit or missed by noise alone.
   const barrierOffset = Math.max(avgStep * 2, last * 0.0005);
   const direction = signal >= 0 ? "up" : "down";
   const barrier = signal >= 0 ? last + barrierOffset : last - barrierOffset;
@@ -513,8 +542,6 @@ function analyseHigherLower(prices) {
 
 function analyseTouchNoTouch(prices) {
   const { volatilityPct, last, avgStep } = trendSignal(prices);
-  // High recent volatility means price is moving enough to plausibly
-  // touch a nearby barrier, low volatility means it is more likely to stay contained.
   const isVolatile = volatilityPct > 0.05;
   const barrierOffset = avgStep * 3;
   const barrier = isVolatile ? last + barrierOffset : last + barrierOffset * 2;
@@ -592,9 +619,6 @@ function analyseMatchesDiffers(prices) {
   const mostFrequentDigit = counts.indexOf(Math.max(...counts));
   const frequency = counts[mostFrequentDigit];
   const pct = Math.round((frequency / digits.length) * 100);
-  // If one digit clearly dominates, Matches on it. Otherwise Differs
-  // from it is the statistically safer bet, since any single digit has
-  // roughly a 10% baseline chance.
   const suggestMatches = pct >= 20;
 
   return {

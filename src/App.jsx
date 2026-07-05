@@ -101,6 +101,7 @@ export default function App() {
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+          
 
           {/* Protected */}
           <Route path="/landing"    element={<PrivateRoute><LandingPage /></PrivateRoute>} />
