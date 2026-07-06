@@ -195,7 +195,7 @@ export default function MpesaDepositForm() {
 
       {error && <div className="text-fx-red text-sm">{error}</div>}
 
-      <button type="submit" className="btn-teal">Send STK Push</button>
+      <button type="submit" className="btn-teal">Initialize</button>
     </form>
   );
 }
