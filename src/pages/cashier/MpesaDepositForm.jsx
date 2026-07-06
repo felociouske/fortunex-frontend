@@ -4,6 +4,7 @@ import { cashierAPI } from "../../api/cashier";
 import { authAPI } from "../../api/auth";
 import useDepositSocket from "../../hooks/useDepositSocket";
 import useAuthStore from "../../store/authStore";
+import AmountInput from "./AmountInput";
 
 /**
  * M-Pesa STK Push deposit flow.
@@ -172,6 +173,7 @@ export default function MpesaDepositForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+      <AmountInput amount={amount} onChange={setAmount} currency="USD" />
       {kesPreview && (
         <p className="text-sm text-fx-text-dim -mt-3">
           You will pay approximately <span className="text-fx-text font-medium">KES {kesPreview}</span> via M-Pesa.

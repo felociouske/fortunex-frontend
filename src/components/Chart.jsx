@@ -411,7 +411,7 @@ export default function Chart({
           <div className="relative inline-block" ref={pickerRef}>
             <button type="button" onClick={() => setPickerOpen((v) => !v)}
               className="flex items-center gap-2 text-sm font-semibold text-fx-text hover:text-fx-teal transition-colors">
-              <span className="text-base font-bold">{selected?.name || instrumentName || symbol}</span>
+              <span className="text-base">{selected?.name || instrumentName || symbol}</span>
               <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                 <polyline points="6,9 12,15 18,9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -434,7 +434,7 @@ export default function Chart({
           <span className="text-base font-bold text-fx-text">{instrumentName || symbol}</span>
         )}
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-2xl font-bold text-fx-teal tabular-nums">
+          <span className="text-2xl text-fx-teal tabular-nums">
             {latest ? Number(latest.price).toFixed(2) : "—"}
           </span>
           <span className="flex items-center gap-1.5 text-xs text-fx-text-dim">
@@ -489,7 +489,7 @@ export default function Chart({
       </div>
 
       {/* Digit strip */}
-      <div className="px-4 pb-4">
+      <div className="ml-7 px-4 pb-4">
         <DigitStrip digitStats={digitStats} latestDigit={latestDigit} hasTicks={ticks.length > 0} />
       </div>
     </div>

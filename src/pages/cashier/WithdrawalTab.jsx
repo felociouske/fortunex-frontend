@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { cashierAPI } from "../../api/cashier";
 import AccountBanner from "./AccountBanner";
+import AmountInput from "./AmountInput";
 
 export default function WithdrawalTab() {
   const [amount, setAmount] = useState("");
@@ -11,15 +12,39 @@ export default function WithdrawalTab() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  // Same shared rate endpoint the M-Pesa deposit form uses -- one
-  // source of truth, so this preview can never drift from the backend.
+  // Same shared rate endpoint the M-Pesa deposit form uses, one source
+  // of truth, so this preview can never drift from the backend.
   useEffect(() => {
     cashierAPI.exchangeRate()
       .then(({ data }) => setRate(Number(data.usd_to_kes)))
       .catch(() => setRate(null));
   }, []);
 
-  const kesPreview = amount && rate ? (Number(amount) * rate).toFixed(0) : null;
+  // Describes what the user will actually be paid, and where, quoting
+  // back the exact payout details they typed so the sentence is
+  // concrete instead of a vague "this payment option". Falls back to
+  // generic wording only while that field is still empty.
+  const payoutPreviewText = () => {
+    if (!amount || Number(amount) <= 0) return null;
+
+    const destination = bankAccount.trim() || "this payout option";
+
+    if (currency === "USD") {
+      // Same currency as the wallet, no conversion needed at all.
+      return `USD ${Number(amount).toFixed(2)} will be sent to Mpesa Number ${destination}.`;
+    }
+    if (currency === "KES") {
+      if (!rate) return null; // rate has not loaded yet, do not show a stale or missing figure
+      const kesAmount = (Number(amount) * rate).toFixed(0);
+      return `KES ${kesAmount} will be sent to Mpesa number ${destination}.`;
+    }
+    // EUR: there is no USD to EUR rate anywhere in the backend
+    // (settings.py only defines USD_TO_KES_RATE), so rather than invent
+    // a number, we stay upfront that a real conversion is not available yet.
+    return `A converted amount for EUR is not available yet, you will be contacted about the payout to ${destination}.`;
+  };
+
+  const previewText = payoutPreviewText();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,15 +87,7 @@ export default function WithdrawalTab() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
-        {/* Your wallet is always USD internally -- this just shows what
-            that translates to in KES, since withdrawals are still paid
-            out manually by an admin (M-Pesa payout automation isn't
-            built yet -- that's a separate task). */}
-        {kesPreview && (
-          <p className="text-sm text-fx-text-dim -mt-3">
-            You will receive approximately <span className="text-fx-text font-medium">KES {kesPreview}</span>.
-          </p>
-        )}
+        <AmountInput amount={amount} onChange={setAmount} currency={currency} />
 
         <div>
           <label className="input-label">Currency</label>
@@ -94,6 +111,15 @@ export default function WithdrawalTab() {
             placeholder="M-Pesa phone number, bank account, etc."
           />
         </div>
+
+        {/* Moved below the field it actually describes, and now quotes
+            back the number the user just typed, instead of sitting
+            above it and pointing at nothing concrete. */}
+        {previewText && (
+          <p className="text-sm text-fx-text-dim -mt-3">
+            {previewText}
+          </p>
+        )}
 
         {error && <div className="text-fx-red text-sm">{error}</div>}
         {message && <div className="text-fx-teal text-sm">{message}</div>}

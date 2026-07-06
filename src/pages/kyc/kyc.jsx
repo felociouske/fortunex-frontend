@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import IndexNavbar from "../../components/IndexNavbar";
+import DashboardNavbar from "../../components/DashboardNavbar"; 
 import useAuthStore from "../../store/authStore";
 import { authAPI } from "../../api/auth";
 
@@ -104,46 +104,62 @@ function AddressSection({ data, onSubmitted }) {
   const locked = data?.status === "SUBMITTED" || data?.status === "VERIFIED";
 
   const captureLocation = () => {
-    setError("");
-    if (!navigator.geolocation) {
-      setError("Your browser doesn't support location access.");
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
-        setLocating(false);
-      },
-      () => {
-        setError("Location access was denied. Please allow it to continue.");
-        setLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
+      setError("");
+      if (!navigator.geolocation) {
+        setError("Your browser doesn't support location access.");
+        return;
+      }
+      setLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          // Rounded here, not just at display time. The backend's
+          // DecimalField only allows 6 decimal places, and the raw
+          // browser value has far more precision than that, if we stored
+          // the raw value, the display would look rounded (toFixed just
+          // formats the string) while the actual number sent to the API
+          // stays untruncated and gets rejected. Six decimal places of
+          // GPS precision is already about 11cm of accuracy, more than
+          // enough for address verification.
+          setCoords({
+            latitude: Number(pos.coords.latitude.toFixed(6)),
+            longitude: Number(pos.coords.longitude.toFixed(6)),
+          });
+          setLocating(false);
+        },
+        () => {
+          setError("Location access was denied. Please allow it to continue.");
+          setLocating(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!image) return setError("Please select a receipt or a photo of your location.");
-    if (!coords) return setError("Please share your location first.");
+      e.preventDefault();
+      setError("");
+      if (!image) return setError("Please select a receipt or a photo of your location.");
+      if (!coords) return setError("Please share your location first.");
 
-    setLoading(true);
-    try {
-      const fd = new FormData();
-      fd.append("address_image", image);
-      fd.append("latitude", coords.latitude);
-      fd.append("longitude", coords.longitude);
-      await authAPI.submitKYCAddress(fd);
-      onSubmitted();
-    } catch (err) {
-      const d = err.response?.data;
-      setError(d?.address_image?.[0] || d?.detail || "Upload failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true);
+      try {
+        const fd = new FormData();
+        fd.append("address_image", image);
+        fd.append("latitude", coords.latitude);
+        fd.append("longitude", coords.longitude);
+        await authAPI.submitKYCAddress(fd);
+        onSubmitted();
+      } catch (err) {
+        const d = err.response?.data;
+        // Now also checks latitude/longitude, this is the exact key that
+        // was actually failing, the previous version never looked at it
+        // so it always fell through to the generic message below.
+        setError(
+          d?.address_image?.[0] || d?.latitude?.[0] || d?.longitude?.[0] || d?.detail || "Upload failed."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <div className={panel}>
@@ -216,7 +232,7 @@ export default function KycPage() {
 
   return (
     <div className="min-h-screen bg-fx-bg text-fx-text">
-      <IndexNavbar />
+      <DashboardNavbar />
       <main className="max-w-3xl mx-auto py-10 px-4">
         <h1 className="text-2xl font-semibold mb-1">Identity Verification</h1>
         <p className="text-fx-text-dim text-sm mb-8">
