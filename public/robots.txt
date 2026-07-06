@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+Disallow: /landing
+Disallow: /dashboard
+Disallow: /history
+Disallow: /trade
+Disallow: /marketplace
+Disallow: /profile
+Disallow: /affiliate
+Disallow: /cashier
+Disallow: /transactions
+Disallow: /kyc
+Disallow: /bots
+Disallow: /notifications
+
+Sitemap: https://fortunextrades.com/sitemap.xml
