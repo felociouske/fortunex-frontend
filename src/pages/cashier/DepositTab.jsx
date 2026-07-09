@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { CreditCard, Building2, Wallet as WalletIcon, Banknote, Bitcoin, Smartphone, Wrench } from "lucide-react";
 import AccountBanner from "./AccountBanner";
-import ManualMpesaDepositForm from "../../components/ManualMpesaDepositForm";
 
 const paymentMethods = [
   { label: "Credit / Debit", icon: CreditCard },
@@ -14,29 +12,25 @@ const paymentMethods = [
 const cryptoMethods = ["Bitcoin", "Ethereum", "Litecoin", "USD Coin", "Tether"];
 
 /**
- * M-Pesa STK Push is temporarily disabled. The working
- * MpesaDepositForm component is untouched, just not rendered, so
- * bringing it back later is a one line swap, not a rebuild.
+ * Both M-Pesa methods are under maintenance for now. The actual
+ * ManualMpesaDepositForm component is untouched and still works, it
+ * has just moved to live on the Fortunex P2P tab instead of here, see
+ * P2PTab.jsx.
  */
-function MpesaMaintenanceNotice() {
+function MpesaMaintenanceNotice({ label }) {
   return (
     <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md">
       <Wrench className="mx-auto text-fx-text-dim" size={28} />
-      <p className="mt-4 font-medium">M-Pesa (instant) is under maintenance</p>
+      <p className="mt-4 font-medium">{label} is under maintenance</p>
       <p className="mt-1 text-sm text-fx-text-dim">
-        This deposit method will be available again soon. In the meantime, use M-Pesa (manual) or a payment agent under Fortunex P2P.
+        This deposit method will be available again soon. In the meantime, use a payment agent under Fortunex P2P.
       </p>
     </div>
   );
 }
 
 export default function DepositTab() {
-  const [searchParams] = useSearchParams();
-  // Lets other pages (the P2P tab's "How this works" guide) deep link
-  // straight into the manual form via /cashier?tab=deposit&method=manual,
-  // instead of just telling the user where to click.
-  const methodFromLink = searchParams.get("method");
-  const [method, setMethod] = useState(methodFromLink === "manual" ? "manual" : "mpesa");
+  const [method, setMethod] = useState("mpesa"); // "mpesa" | "manual"
 
   return (
     <div>
@@ -72,7 +66,11 @@ export default function DepositTab() {
         </button>
       </div>
 
-      {method === "mpesa" ? <MpesaMaintenanceNotice /> : <ManualMpesaDepositForm />}
+      {method === "mpesa" ? (
+        <MpesaMaintenanceNotice label="M-Pesa (instant)" />
+      ) : (
+        <MpesaMaintenanceNotice label="M-Pesa (manual)" />
+      )}
 
       {/* Reference: other payment methods (static for now, not yet functional) */}
       <div className="mt-10 space-y-6">

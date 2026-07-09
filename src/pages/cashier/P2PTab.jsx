@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { Search, Star, ShieldCheck, Clock, Copy, Check, ChevronDown, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Search, Star, ShieldCheck, MapPin, Copy, Check, ChevronDown } from "lucide-react";
 import { cashierAPI } from "../../api/cashier";
+import AgentPaymentSubmitForm from "../../components/AgentPaymentSubmitForm";
 
 /**
  * Per-agent trust details, matched to the backend agent by exact
  * `name`. Everything here is intentionally frontend only, per product
  * decision, none of it comes from the API. Fill in real entries as you
  * get them, agent names not listed here fall back to FALLBACK_DETAILS
- * below so a newly added agent in Django admin never breaks this page,
- * it just looks generic until you add its real entry here.
+ * below so a newly added agent in Django admin never breaks this page.
  *
  * To add an agent's real details: copy the shape below, key it by the
  * EXACT name you gave that agent in Django admin (case sensitive).
@@ -18,21 +17,26 @@ const AGENT_DETAILS = {
   // "Kengo Finance": {
   //   rating: 4.9,
   //   reviewCount: 214,
+  //   location: "Nairobi",
+  //   reputation: "Long standing FortuneX agent, over 300 successful deposits processed.",
   //   description: "Fast, reliable M-Pesa deposits with same day processing.",
   //   verified: true,
-  //   responseTime: "Usually responds in minutes",
   // },
 };
 
 const FALLBACK_DETAILS = {
-  rating: 4.5,
+  rating: null,
   reviewCount: 0,
-  description: "A trusted FortuneX deposit agent.",
-  verified: true,
-  responseTime: "Usually responds within an hour",
+  location: "Location not listed yet",
+  reputation: "Details for this agent are being added.",
+  description: "A FortuneX payment agent.",
+  verified: false,
 };
 
 function StarRating({ rating }) {
+  if (rating === null) {
+    return <span className="text-fx-text-dim text-xs">Not yet rated</span>;
+  }
   const fullStars = Math.round(rating);
   return (
     <div className="flex items-center gap-1">
@@ -49,12 +53,18 @@ function StarRating({ rating }) {
   );
 }
 
+/**
+ * Each card mounts its own <AgentPaymentSubmitForm>, a separate
+ * component instance per agent, so each card's amount/phone/code state
+ * is completely independent of every other card's, automatically.
+ */
 function AgentCard({ agent }) {
   const details = AGENT_DETAILS[agent.name] || FALLBACK_DETAILS;
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
+  const handleCopy = (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(agent.phone_number).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -79,7 +89,13 @@ function AgentCard({ agent }) {
               <p className="text-fx-text font-semibold">{agent.name}</p>
               {details.verified && <ShieldCheck size={14} className="text-fx-teal" />}
             </div>
-            <StarRating rating={details.rating} />
+            <div className="flex items-center gap-3 mt-0.5">
+              <StarRating rating={details.rating} />
+              <span className="flex items-center gap-1 text-fx-text-dim text-xs">
+                <MapPin size={11} />
+                {details.location}
+              </span>
+            </div>
           </div>
         </div>
         <ChevronDown
@@ -90,24 +106,35 @@ function AgentCard({ agent }) {
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-fx-border pt-4">
-          <p className="text-fx-text-dim text-sm leading-relaxed">{details.description}</p>
+        <div className="px-5 pb-6 space-y-5 border-t border-fx-border pt-4">
+          {/* Agent details */}
+          <div className="space-y-3">
+            <p className="text-fx-text-dim text-sm leading-relaxed">{details.description}</p>
 
-          <div className="flex items-center gap-1.5 text-fx-text-dim text-xs">
-            <Clock size={12} />
-            {details.responseTime}
-            {details.reviewCount > 0 && <span>&nbsp;&middot; {details.reviewCount} reviews</span>}
+            <div className="rounded-lg px-3 py-2" style={{ background: "rgba(0,194,178,0.06)" }}>
+              <p className="text-fx-text-dim text-xs leading-relaxed">{details.reputation}</p>
+            </div>
+
+            {details.reviewCount > 0 && (
+              <p className="text-fx-text-dim text-xs">{details.reviewCount} reviews</p>
+            )}
+
+            <div className="flex items-center gap-3 rounded-xl border border-fx-border bg-fx-bg px-4 py-3">
+              <span className="flex-1 text-fx-text font-mono text-sm">{agent.phone_number}</span>
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0"
+                style={{ background: "rgba(0,194,178,0.1)", color: "#00c2b2", border: "1px solid rgba(0,194,178,0.25)" }}
+              >
+                {copied ? (<><Check size={12} />Copied</>) : (<><Copy size={12} />Copy number</>)}
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl border border-fx-border bg-fx-bg px-4 py-3">
-            <span className="flex-1 text-fx-text font-mono text-sm">{agent.phone_number}</span>
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0"
-              style={{ background: "rgba(0,194,178,0.1)", color: "#00c2b2", border: "1px solid rgba(0,194,178,0.25)" }}
-            >
-              {copied ? (<><Check size={12} />Copied</>) : (<><Copy size={12} />Copy number</>)}
-            </button>
+          {/* This agent's own dedicated submission form */}
+          <div className="pt-4 border-t border-fx-border">
+            <p className="text-fx-text text-sm font-semibold mb-3">Submit your payment</p>
+            <AgentPaymentSubmitForm agentPhoneNumber={agent.phone_number} />
           </div>
         </div>
       )}
@@ -116,22 +143,14 @@ function AgentCard({ agent }) {
 }
 
 function HowItWorksBanner() {
-  const navigate = useNavigate();
   return (
     <div className="rounded-2xl border border-fx-border bg-fx-surface p-5 mb-6">
       <p className="text-fx-text font-semibold mb-3">How this works</p>
       <ol className="space-y-2 text-fx-text-dim text-sm list-decimal list-inside">
-        <li>Pick an agent below and copy their phone number.</li>
-        <li>Send the amount you want to deposit to that number via M-Pesa.</li>
-        <li>Submit the M-Pesa confirmation code on the M-Pesa (manual) tab for verification.</li>
+        <li>Pick an agent below and tap to open their card.</li>
+        <li>Send the amount you want to deposit via M-Pesa Send Money.</li>
+        <li>Submit your confirmation code in that same agent's card.</li>
       </ol>
-      <button
-        onClick={() => navigate("/cashier?tab=deposit&method=manual")}
-        className="btn-teal mt-4 flex items-center gap-2 w-fit"
-      >
-        Go submit your code
-        <ArrowRight size={14} />
-      </button>
     </div>
   );
 }

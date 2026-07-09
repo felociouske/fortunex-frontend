@@ -430,17 +430,6 @@ export default function DashboardNavbar() {
           {/* ── RIGHT ────────────────────────────────────────────────────── */}
           <div className="relative flex items-center gap-1 sm:gap-2">
 
-            <button
-              ref={depositBtnRef}
-              onClick={() => setDepositOpen((v) => !v)}
-              className="hidden sm:flex items-center px-4 py-1.5 rounded-lg text-white text-sm font-semibold transition-all duration-200 mr-1"
-              style={{ background: "#e8404a" }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#c93039")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#e8404a")}
-            >
-              Deposit
-            </button>
-
             <BalanceDisplay balance={balance} />
 
             <NotificationDropdown />
