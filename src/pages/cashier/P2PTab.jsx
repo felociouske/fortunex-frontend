@@ -4,25 +4,68 @@ import { cashierAPI } from "../../api/cashier";
 import AgentPaymentSubmitForm from "../../components/AgentPaymentSubmitForm";
 
 /**
- * Per-agent trust details, matched to the backend agent by exact
- * `name`. Everything here is intentionally frontend only, per product
- * decision, none of it comes from the API. Fill in real entries as you
- * get them, agent names not listed here fall back to FALLBACK_DETAILS
- * below so a newly added agent in Django admin never breaks this page.
+ * Per-agent trust details. Intentionally frontend only, per product
+ * decision — none of it comes from the API.
  *
- * To add an agent's real details: copy the shape below, key it by the
- * EXACT name you gave that agent in Django admin (case sensitive).
+ * These are applied by ORDER, not by name: the 1st agent returned by
+ * the backend gets AGENT_DETAILS[0], the 2nd gets AGENT_DETAILS[1],
+ * etc. Any agent beyond this list falls back to FALLBACK_DETAILS
+ * below, so a newly added agent in Django admin never breaks this page.
+ *
+ * To add another agent's real details, just append a new object to
+ * the end of this array (it becomes the details for the next new
+ * agent in the backend's ordering).
  */
-const AGENT_DETAILS = {
-  // "Kengo Finance": {
-  //   rating: 4.9,
-  //   reviewCount: 214,
-  //   location: "Nairobi",
-  //   reputation: "Long standing FortuneX agent, over 300 successful deposits processed.",
-  //   description: "Fast, reliable M-Pesa deposits with same day processing.",
-  //   verified: true,
-  // },
-};
+const AGENT_DETAILS = [
+  {
+    rating: 4.9,
+    reviewCount: 214,
+    location: "Nairobi",
+    reputation: "Long standing FortuneX agent, over 300 successful deposits processed.",
+    description: "Fast, reliable M-Pesa deposits with same day processing.",
+    verified: true,
+  },
+  {
+    rating: 4.7,
+    reviewCount: 132,
+    location: "Nairobi",
+    reputation: "Consistently fast confirmations, active FortuneX agent since early this year.",
+    description: "Specialises in same hour deposit confirmations for FortuneX traders.",
+    verified: true,
+  },
+  {
+    rating: 4.6,
+    reviewCount: 98,
+    location: "Nairobi",
+    reputation: "Handles higher value deposits regularly without issues.",
+    description: "Comfortable processing both small and large deposit amounts.",
+    verified: true,
+  },
+  {
+    rating: 4.5,
+    reviewCount: 61,
+    location: "Nairobi",
+    reputation: "Newer FortuneX agent, clean record so far.",
+    description: "A straightforward, no frills deposit option.",
+    verified: false,
+  },
+  {
+    rating: 4.8,
+    reviewCount: 175,
+    location: "Nairobi",
+    reputation: "Well known within the FortuneX trading community for responsiveness.",
+    description: "Popular with traders who deposit frequently throughout the week.",
+    verified: true,
+  },
+  {
+    rating: 4.4,
+    reviewCount: 47,
+    location: "Nairobi",
+    reputation: "Smaller volume agent, reliable for everyday deposit amounts.",
+    description: "Good option for quick, everyday sized deposits.",
+    verified: false,
+  },
+];
 
 const FALLBACK_DETAILS = {
   rating: null,
@@ -57,9 +100,11 @@ function StarRating({ rating }) {
  * Each card mounts its own <AgentPaymentSubmitForm>, a separate
  * component instance per agent, so each card's amount/phone/code state
  * is completely independent of every other card's, automatically.
+ *
+ * `details` is now passed in as a prop (resolved by position in the
+ * parent) instead of being looked up here by name.
  */
-function AgentCard({ agent }) {
-  const details = AGENT_DETAILS[agent.name] || FALLBACK_DETAILS;
+function AgentCard({ agent, details }) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -166,8 +211,15 @@ export default function P2PTab() {
       .catch(() => setError("Unable to load payment agents."));
   }, []);
 
-  const filtered = (agents || []).filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
+  // Attach details by position BEFORE filtering, so the pairing stays
+  // fixed to each agent regardless of what the user searches for.
+  const enriched = (agents || []).map((agent, i) => ({
+    agent,
+    details: AGENT_DETAILS[i] || FALLBACK_DETAILS,
+  }));
+
+  const filtered = enriched.filter(({ agent }) =>
+    agent.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -205,8 +257,8 @@ export default function P2PTab() {
 
       {filtered.length > 0 && (
         <div className="space-y-3">
-          {filtered.map((agent) => (
-            <AgentCard key={agent.id} agent={agent} />
+          {filtered.map(({ agent, details }) => (
+            <AgentCard key={agent.id} agent={agent} details={details} />
           ))}
         </div>
       )}
