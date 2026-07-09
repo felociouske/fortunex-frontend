@@ -11,6 +11,7 @@ import DashboardNavbar from "../../components/DashboardNavbar";
 import DepositTab from "./DepositTab";
 import WithdrawalTab from "./WithdrawalTab";
 import PlaceholderTab from "./PlaceholderTab";
+import P2PTab from "./P2PTab";
 
 const TABS = [
   { key: "deposit", label: "Deposit", icon: Wallet },
@@ -53,12 +54,7 @@ export default function Cashier() {
           />
         );
       case "p2p":
-        return (
-          <PlaceholderTab
-            title="Deriv P2P"
-            description="Trade directly with other users using your preferred payment method."
-          />
-        );
+        return <P2PTab />;
       default:
         return null;
     }

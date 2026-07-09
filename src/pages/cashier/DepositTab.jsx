@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { CreditCard, Building2, Wallet as WalletIcon, Banknote, Bitcoin, Smartphone } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { CreditCard, Building2, Wallet as WalletIcon, Banknote, Bitcoin, Smartphone, Wrench } from "lucide-react";
 import AccountBanner from "./AccountBanner";
-import MpesaDepositForm from "./MpesaDepositForm";
 import ManualMpesaDepositForm from "../../components/ManualMpesaDepositForm";
 
 const paymentMethods = [
@@ -13,8 +13,30 @@ const paymentMethods = [
 
 const cryptoMethods = ["Bitcoin", "Ethereum", "Litecoin", "USD Coin", "Tether"];
 
+/**
+ * M-Pesa STK Push is temporarily disabled. The working
+ * MpesaDepositForm component is untouched, just not rendered, so
+ * bringing it back later is a one line swap, not a rebuild.
+ */
+function MpesaMaintenanceNotice() {
+  return (
+    <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md">
+      <Wrench className="mx-auto text-fx-text-dim" size={28} />
+      <p className="mt-4 font-medium">M-Pesa (instant) is under maintenance</p>
+      <p className="mt-1 text-sm text-fx-text-dim">
+        This deposit method will be available again soon. In the meantime, use M-Pesa (manual) or a payment agent under Fortunex P2P.
+      </p>
+    </div>
+  );
+}
+
 export default function DepositTab() {
-  const [method, setMethod] = useState("mpesa"); // "mpesa" | "manual"
+  const [searchParams] = useSearchParams();
+  // Lets other pages (the P2P tab's "How this works" guide) deep link
+  // straight into the manual form via /cashier?tab=deposit&method=manual,
+  // instead of just telling the user where to click.
+  const methodFromLink = searchParams.get("method");
+  const [method, setMethod] = useState(methodFromLink === "manual" ? "manual" : "mpesa");
 
   return (
     <div>
@@ -36,7 +58,7 @@ export default function DepositTab() {
             ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
             : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
         >
-          M-Pesa (instant)
+          <Smartphone size={16} /> M-Pesa (instant)
         </button>
         <button
           type="button"
@@ -46,11 +68,11 @@ export default function DepositTab() {
             ? { background: "#00c2b2", borderColor: "#00c2b2", color: "#0d0d14" }
             : { background: "transparent", borderColor: "#2a2a3d", color: "#9ca3af" }}
         >
-          M-Pesa (manual)
+          <Smartphone size={16} /> M-Pesa (manual)
         </button>
       </div>
 
-      {method === "mpesa" ? <MpesaDepositForm /> : <ManualMpesaDepositForm />}
+      {method === "mpesa" ? <MpesaMaintenanceNotice /> : <ManualMpesaDepositForm />}
 
       {/* Reference: other payment methods (static for now, not yet functional) */}
       <div className="mt-10 space-y-6">
