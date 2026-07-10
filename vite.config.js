@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,   // <-- add this to test PWA in dev
+      },
       // Don't precache hashed JS/CSS bundles eagerly beyond Vite's own
       // output -- and explicitly exclude API/WS traffic from any runtime
       // caching strategy below. Stale cached prices/balances would be a

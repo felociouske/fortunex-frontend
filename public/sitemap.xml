@@ -2,100 +2,100 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://fortunex.com/</loc>
+    <loc>https://fortunextrades.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://fortunex.com/forex</loc>
+    <loc>https://fortunextrades.com/forex</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/derived-indices</loc>
+    <loc>https://fortunextrades.com/derived-indices</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/stocks</loc>
+    <loc>https://fortunextrades.com/stocks</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/commodities</loc>
+    <loc>https://fortunextrades.com/commodities</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/crypto</loc>
+    <loc>https://fortunextrades.com/crypto</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/cfds</loc>
+    <loc>https://fortunextrades.com/cfds</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/options</loc>
+    <loc>https://fortunextrades.com/options</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/multipliers</loc>
+    <loc>https://fortunextrades.com/multipliers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/smarttrader</loc>
+    <loc>https://fortunextrades.com/smarttrader</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/autotrade</loc>
+    <loc>https://fortunextrades.com/autotrade</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://fortunex.com/economic-calendar</loc>
+    <loc>https://fortunextrades.com/economic-calendar</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/beginners-guide</loc>
+    <loc>https://fortunextrades.com/beginners-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/trading-strategies</loc>
+    <loc>https://fortunextrades.com/trading-strategies</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/glossary</loc>
+    <loc>https://fortunextrades.com/glossary</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://fortunex.com/who-we-are</loc>
+    <loc>https://fortunextrades.com/who-we-are</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/our-principles</loc>
+    <loc>https://fortunextrades.com/our-principles</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/regulatory-info</loc>
+    <loc>https://fortunextrades.com/regulatory-info</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fortunex.com/terms-conditions</loc>
+    <loc>https://fortunextrades.com/terms-conditions</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

@@ -12,16 +12,16 @@ function copyToClipboard(text, onSuccess) {
 
 function StatCard({ icon: Icon, label, value, accent = false, action }) {
   return (
-    <div className="rounded-2xl border border-fx-border bg-fx-surface p-5 flex items-start gap-4">
+    <div className="rounded-2xl border border-fx-border bg-fx-surface p-4 sm:p-5 flex items-start gap-3 sm:gap-4">
       <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
         style={{ background: accent ? "rgba(0,194,178,0.12)" : "rgba(255,255,255,0.05)" }}
       >
         <Icon size={18} style={{ color: accent ? "#00c2b2" : "#9ca3af" }} />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <p className="text-fx-text-dim text-xs font-medium uppercase tracking-wide mb-1">{label}</p>
-        <p className="text-xl font-bold" style={{ color: accent ? "#00c2b2" : "#e5e7eb" }}>{value}</p>
+        <p className="text-lg sm:text-xl font-bold truncate" style={{ color: accent ? "#00c2b2" : "#e5e7eb" }}>{value}</p>
         {action}
       </div>
     </div>
@@ -118,7 +118,7 @@ function ReferralsTable({ rows }) {
   );
 }
 
-/* ── Yield wallet withdrawal modal ──────────────────────────────────────────
+/* -- Yield wallet withdrawal modal --------------------------------------
    Reuses the existing /cashier/withdrawal/ endpoint -- the only thing
    that makes this different from the Cashier page's own withdrawal
    form is explicitly setting source_wallet: "yield_balance", which
@@ -222,7 +222,7 @@ function Skeleton({ className }) {
 function LoadingState() {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20" />)}
       </div>
       <Skeleton className="h-32" />
@@ -275,7 +275,7 @@ export default function Affiliate() {
   return (
     <div className="min-h-screen bg-fx-bg text-fx-text">
       <DashboardNavbar />
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-fx-text">Referral program</h1>
           <p className="text-fx-text-dim text-sm mt-1">
@@ -298,7 +298,7 @@ export default function Affiliate() {
 
         {data && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard icon={Users} label="Total referrals" value={referredUsers.length} />
               <StatCard icon={DollarSign} label="Total earned" value={`$${totalEarned.toFixed(2)}`} accent />
               <StatCard icon={TrendingUp} label="Commission rate" value={data.commission_rate ? `${data.commission_rate}%` : "—"} />
@@ -324,7 +324,7 @@ export default function Affiliate() {
               <div className="md:col-span-2">
                 <ReferralLinkBox code={data.link.code} />
               </div>
-              <div></div>
+              <div className="hidden md:block"></div>
             </div>
 
             <div className="rounded-2xl border border-fx-border bg-fx-surface p-6">
