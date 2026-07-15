@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cashierAPI } from "../../api/cashier";
+import { walletAPI } from "../../api/market";
 import AccountBanner from "./AccountBanner";
 import AmountInput from "./AmountInput";
 
@@ -11,6 +13,19 @@ export default function WithdrawalTab() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const queryClient = useQueryClient();
+
+  // Live balance, same query key/pattern Dashboard and Bots already use --
+  // NOT the cached user.wallet snapshot from authStore, which only gets
+  // set once at login and never updates when an admin approves a
+  // withdrawal later. React Query refetches this on mount/window focus,
+  // so navigating back here after an approval shows the real number.
+  const { data: walletData } = useQuery({
+    queryKey: ["walletBalance"],
+    queryFn: walletAPI.getBalance,
+  });
+  const realBalance = Number(walletData?.data?.real_balance ?? 0);
 
   // Same shared rate endpoint the M-Pesa deposit form uses, one source
   // of truth, so this preview can never drift from the backend.
@@ -62,14 +77,29 @@ export default function WithdrawalTab() {
       setLoading(false);
       return;
     }
+    if (Number(amount) > realBalance) {
+      setError("Your requested amount is larger than your available real balance.");
+      setLoading(false);
+      return;
+    }
 
     try {
       await cashierAPI.withdrawal({ amount, currency, payout_details: bankAccount });
       setMessage("Withdrawal request submitted successfully.");
       setAmount("");
       setBankAccount("");
+      // Doesn't change the number shown yet -- the balance itself only
+      // decreases once an admin approves the request (see cashier/admin.py)
+      // -- but it does refresh the "available" figure other tabs use, in
+      // case pending amounts factor into a validation message elsewhere.
+      queryClient.invalidateQueries({ queryKey: ["walletBalance"] });
     } catch (err) {
-      setError(err.response?.data?.detail || "Unable to submit withdrawal request.");
+      const data = err.response?.data;
+      // The backend raises a plain (non-field) ValidationError for KYC/
+      // insufficient-balance checks, which DRF puts under
+      // "non_field_errors" -- NOT ".detail". Check that first, same
+      // pattern already used in Affiliate.jsx's YieldWithdrawModal.
+      setError(data?.non_field_errors?.[0] || data?.detail || "Unable to submit withdrawal request.");
     } finally {
       setLoading(false);
     }
@@ -85,6 +115,10 @@ export default function WithdrawalTab() {
       <div className="mt-6">
         <AccountBanner />
       </div>
+
+      <p className="text-fx-text-dim text-sm mb-4">
+        Available: <span className="text-fx-teal font-medium">${realBalance.toFixed(2)}</span>
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
         <AmountInput amount={amount} onChange={setAmount} currency={currency} />

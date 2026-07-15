@@ -129,20 +129,6 @@ function OptionsSection({ balance = 0 }) {
             Predict the market, profit if you're right, risk only what you put in.
           </p>
         </div>
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="text-right">
-            <p className="text-fx-teal text-sm leading-tight">
-              {formatBalance(balance)} USD
-            </p>
-            <p className="text-fx-text-dim text-xs">Account balance</p>
-          </div>
-          <Link
-            to="/cashier?tab=deposit"
-            className="px-3 py-1.5 rounded-lg text-white text-xs bg-fx-red hover:bg-fx-red-dk transition-colors duration-200"
-          >
-            Deposit
-          </Link>
-        </div>
       </div>
 
       {/* Platforms */}

@@ -1,6 +1,9 @@
+// top imports — added useQuery + walletAPI
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { authAPI } from "../../api/auth";
+import { walletAPI } from "../../api/market";
 import DashboardNavbar from "../../components/DashboardNavbar";
 import useAuthStore from "../../store/authStore";
 import { COUNTRIES } from "../../utils/constants";
@@ -132,7 +135,11 @@ export default function Profile() {
     }
   };
 
-  const wallet = user?.wallet;
+  const { data: walletData } = useQuery({
+    queryKey: ["walletBalance"],
+    queryFn: walletAPI.getBalance,
+  });
+  const wallet = walletData?.data;
 
   return (
     <div className="min-h-screen bg-fx-bg text-fx-text">

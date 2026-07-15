@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Copy, Check, Users, DollarSign, TrendingUp, Link2, Clock, X, Wallet as WalletIcon } from "lucide-react";
 import { affiliateAPI } from "../../api/affiliate";
 import { cashierAPI } from "../../api/cashier";
-import { authAPI } from "../../api/auth";
-import useAuthStore from "../../store/authStore";
+import { walletAPI } from "../../api/market";
 import DashboardNavbar from "../../components/DashboardNavbar";
 
 function copyToClipboard(text, onSuccess) {
@@ -237,9 +237,17 @@ export default function Affiliate() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawMessage, setWithdrawMessage] = useState("");
 
-  const user = useAuthStore((s) => s.user);
-  const setUser = useAuthStore((s) => s.setUser);
-  const yieldBalance = user?.wallet?.yield_balance ?? 0;
+  const queryClient = useQueryClient();
+
+  // Live balance, same query key/pattern Dashboard/Bots/Profile use --
+  // NOT user.wallet from authStore, which is only set once at login and
+  // never refreshes when an admin later approves a withdrawal, which is
+  // why this card used to show a "stuck" yield balance.
+  const { data: walletData } = useQuery({
+    queryKey: ["walletBalance"],
+    queryFn: walletAPI.getBalance,
+  });
+  const yieldBalance = walletData?.data?.yield_balance ?? 0;
 
   useEffect(() => {
     const load = async () => {
@@ -256,19 +264,15 @@ export default function Affiliate() {
   const referredUsers = data?.referred_users ?? [];
   const totalEarned = referredUsers.reduce((sum, r) => sum + parseFloat(r.commission_earned || 0), 0);
 
-  const handleWithdrawSuccess = async () => {
+  const handleWithdrawSuccess = () => {
     setShowWithdrawModal(false);
     setWithdrawMessage("Withdrawal request submitted. An admin will review it shortly.");
-    // Refresh the cached user so the yield balance shown here (and
-    // everywhere else it's displayed) reflects the pending withdrawal
-    // -- note the balance itself only actually decreases once an
-    // admin approves it, same as any other withdrawal on this platform.
-    try {
-      const { data: profile } = await authAPI.getProfile();
-      setUser(profile);
-    } catch {
-      // Non-fatal -- the balance will just be stale until next reload.
-    }
+    // Note the balance itself only actually decreases once an admin
+    // approves it (see cashier/admin.py) -- this invalidation just makes
+    // sure the figure shown here is live rather than a stale snapshot,
+    // so it'll pick up the change automatically once that happens (e.g.
+    // next time this query refetches on window focus).
+    queryClient.invalidateQueries({ queryKey: ["walletBalance"] });
     setTimeout(() => setWithdrawMessage(""), 4000);
   };
 

@@ -4,20 +4,21 @@ import {
   Wallet,
   Banknote,
   Handshake,
-  ArrowLeftRight,
+  Smartphone,
   Users,
 } from "lucide-react";
 import DashboardNavbar from "../../components/DashboardNavbar";
 import DepositTab from "./DepositTab";
 import WithdrawalTab from "./WithdrawalTab";
 import PlaceholderTab from "./PlaceholderTab";
+import BluePayTab from "./BluePayTab";
 import P2PTab from "./P2PTab";
 
 const TABS = [
-  { key: "deposit", label: "Deposit", icon: Wallet },
+  { key: "deposit", label: "Fortunex One", icon: Wallet },
   { key: "withdrawal", label: "Withdrawal", icon: Banknote },
   { key: "payment-agents", label: "Payment agents", icon: Handshake },
-  { key: "transfer", label: "Transfer", icon: ArrowLeftRight },
+  { key: "bluepay", label: "BluePay", icon: Smartphone },
   { key: "p2p", label: "Fortunex P2P", icon: Users },
 ];
 
@@ -46,13 +47,8 @@ export default function Cashier() {
             description="Deposit and withdraw through a trusted local agent."
           />
         );
-      case "transfer":
-        return (
-          <PlaceholderTab
-            title="Transfer"
-            description="Move funds between your FortuNex accounts and wallets."
-          />
-        );
+      case "bluepay":
+        return <BluePayTab />;
       case "p2p":
         return <P2PTab />;
       default:
