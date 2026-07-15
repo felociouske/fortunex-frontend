@@ -5,6 +5,7 @@ import { walletAPI } from "../../api/market";
 import AccountBanner from "./AccountBanner";
 import AmountInput from "./AmountInput";
 
+
 export default function WithdrawalTab() {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("USD");
@@ -115,10 +116,6 @@ export default function WithdrawalTab() {
       <div className="mt-6">
         <AccountBanner />
       </div>
-
-      <p className="text-fx-text-dim text-sm mb-4">
-        Available: <span className="text-fx-teal font-medium">${realBalance.toFixed(2)}</span>
-      </p>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
         <AmountInput amount={amount} onChange={setAmount} currency={currency} />

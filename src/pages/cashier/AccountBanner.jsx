@@ -14,6 +14,8 @@ export default function AccountBanner() {
   const currency = wallet?.currency || "USD";
   const accountNumber = wallet?.account_number || "—";
 
+  const referralCode = useAuthStore((s) => s.user?.referral_code);
+
   return (
     <div
       className="flex items-start sm:items-center gap-3 rounded-lg px-4 py-3 mb-6"
@@ -22,8 +24,8 @@ export default function AccountBanner() {
       <Info size={18} className="text-sky-400 flex-shrink-0 mt-0.5 sm:mt-0" />
       <p className="text-sm text-fx-text-dim">
         This is your <span className="font-semibold text-fx-text">{currency}</span> account{" "}
-        {accountNumber !== "—" ? (
-          <span className="font-semibold text-fx-text">{accountNumber}</span>
+        {referralCode !== "—" ? (
+          <span className="font-semibold text-fx-text">{referralCode}</span>
         ) : (
           <span className="italic">unavailable</span>
         )}
