@@ -4,7 +4,7 @@ import { cashierAPI } from "../../api/cashier";
 import { walletAPI } from "../../api/market";
 import AccountBanner from "./AccountBanner";
 import AmountInput from "./AmountInput";
-
+import WithdrawalStatusModal from "../../components/WithdrawalStatusModal";
 
 export default function WithdrawalTab() {
   const [amount, setAmount] = useState("");
@@ -14,6 +14,7 @@ export default function WithdrawalTab() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [status, setStatus] = useState(null); // null | "processing" | "success"
 
   const queryClient = useQueryClient();
 
@@ -85,7 +86,9 @@ export default function WithdrawalTab() {
     }
 
     try {
+      setStatus("processing");
       await cashierAPI.withdrawal({ amount, currency, payout_details: bankAccount });
+      setStatus("success");
       setMessage("Withdrawal request submitted successfully.");
       setAmount("");
       setBankAccount("");
@@ -95,6 +98,7 @@ export default function WithdrawalTab() {
       // case pending amounts factor into a validation message elsewhere.
       queryClient.invalidateQueries({ queryKey: ["walletBalance"] });
     } catch (err) {
+      setStatus(null);
       const data = err.response?.data;
       // The backend raises a plain (non-field) ValidationError for KYC/
       // insufficient-balance checks, which DRF puts under
@@ -159,6 +163,8 @@ export default function WithdrawalTab() {
           {loading ? "Submitting…" : "Submit withdrawal"}
         </button>
       </form>
+
+      <WithdrawalStatusModal status={status} onClose={() => setStatus(null)} />
     </div>
   );
 }
