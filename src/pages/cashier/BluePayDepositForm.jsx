@@ -144,9 +144,12 @@ export default function BluePayDepositForm() {
     setError("");
   };
 
+  // Centering note: max-w-md caps the width, mx-auto centers that
+  // capped box horizontally within its parent. Added to all 4 return
+  // blocks below so the form/cards stay centered in every stage.
   if (stage === "waiting" || stage === "sending") {
     return (
-      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md">
+      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md mx-auto">
         <Loader2 className="mx-auto animate-spin text-fx-teal" size={32} />
         <p className="mt-4 font-medium">
           {stage === "sending" ? "Sending payment request…" : "Check your phone"}
@@ -160,7 +163,7 @@ export default function BluePayDepositForm() {
 
   if (stage === "success") {
     return (
-      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md">
+      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md mx-auto">
         <CheckCircle2 className="mx-auto text-fx-teal" size={32} />
         <p className="mt-4 font-medium">{resultMessage}</p>
         <button onClick={reset} className="btn-teal mt-4">Make another deposit</button>
@@ -170,7 +173,7 @@ export default function BluePayDepositForm() {
 
   if (stage === "failed") {
     return (
-      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md">
+      <div className="rounded-2xl border border-fx-border bg-[#11131f] p-6 text-center max-w-md mx-auto">
         <XCircle className="mx-auto text-fx-red" size={32} />
         <p className="mt-4 font-medium">{resultMessage}</p>
         <button onClick={reset} className="btn-teal mt-4">Try again</button>
@@ -179,7 +182,7 @@ export default function BluePayDepositForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
       <AmountInput amount={amount} onChange={setAmount} currency="USD" />
       {kesPreview && (
         <p className="text-sm text-fx-text-dim -mt-3">

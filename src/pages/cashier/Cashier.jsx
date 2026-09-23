@@ -3,21 +3,18 @@ import { useSearchParams } from "react-router-dom";
 import {
   Wallet,
   Banknote,
-  Handshake,
   Smartphone,
   Users,
 } from "lucide-react";
 import DashboardNavbar from "../../components/DashboardNavbar";
-import DepositTab from "./DepositTab";
 import WithdrawalTab from "./WithdrawalTab";
-import PlaceholderTab from "./PlaceholderTab";
 import BluePayTab from "./BluePayTab";
+import MpesaDepositForm from "./MpesaDepositForm";
 import P2PTab from "./P2PTab";
 
 const TABS = [
   { key: "deposit", label: "Fortunex One", icon: Wallet },
   { key: "withdrawal", label: "Withdrawal", icon: Banknote },
-  { key: "payment-agents", label: "Payment agents", icon: Handshake },
   { key: "bluepay", label: "BluePay", icon: Smartphone },
   { key: "p2p", label: "Fortunex P2P", icon: Users },
 ];
@@ -37,16 +34,9 @@ export default function Cashier() {
   const renderTab = () => {
     switch (activeTab) {
       case "deposit":
-        return <DepositTab />;
+        return <BluePayTab />;
       case "withdrawal":
         return <WithdrawalTab />;
-      case "payment-agents":
-        return (
-          <PlaceholderTab
-            title="Payment agents"
-            description="Deposit and withdraw through a trusted local agent."
-          />
-        );
       case "bluepay":
         return <BluePayTab />;
       case "p2p":

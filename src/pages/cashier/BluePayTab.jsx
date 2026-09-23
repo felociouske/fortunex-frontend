@@ -10,15 +10,15 @@ import BluePayDepositForm from "./BluePayDepositForm";
 export default function BluePayTab() {
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-semibold">Deposit via BluePay</h1>
-      <p className="text-fx-text-dim mt-2 text-sm sm:text-base">
-        Pay instantly with M-Pesa STK Push, processed through BluePay.
-      </p>
-
-      <div className="mt-6">
-        <AccountBanner />
+      <div className="rounded-xl border border-fx-border bg-[#11131f] p-4 text-sm text-fx-text-dim">
+        <p className="font-medium text-fx-text mb-2 text-center">Bluepay is the fastest deposit route for Mpesa Users</p>
+        <ol className="list-decimal list-inside space-y-1 text-center">
+          <li>Enter the amount in USD and your M-Pesa phone number.</li>
+          <li>You will receive an STK push prompt on your phone.</li>
+          <li>Enter your M-Pesa PIN to approve the payment.</li>
+          <li>Your wallet balance updates automatically once confirmed.</li>
+        </ol>
       </div>
-
       <div className="mt-6">
         <BluePayDepositForm />
       </div>

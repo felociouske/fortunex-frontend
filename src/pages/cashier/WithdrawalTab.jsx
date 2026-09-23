@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cashierAPI } from "../../api/cashier";
 import { walletAPI } from "../../api/market";
-import AccountBanner from "./AccountBanner";
 import AmountInput from "./AmountInput";
 import WithdrawalStatusModal from "../../components/WithdrawalStatusModal";
 
@@ -114,14 +113,10 @@ export default function WithdrawalTab() {
     <div>
       <h1 className="text-2xl sm:text-3xl font-semibold">Withdraw funds</h1>
       <p className="text-fx-text-dim mt-2 text-sm sm:text-base">
-        Request a withdrawal and send funds to your bank account.
+        Request a withdrawal and send funds to your registered number.
       </p>
 
-      <div className="mt-6">
-        <AccountBanner />
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-md mt-6">
         <AmountInput amount={amount} onChange={setAmount} currency={currency} />
 
         <div>
@@ -133,7 +128,6 @@ export default function WithdrawalTab() {
           >
             <option value="USD">USD</option>
             <option value="KES">KES</option>
-            <option value="EUR">EUR</option>
           </select>
         </div>
 
@@ -143,7 +137,7 @@ export default function WithdrawalTab() {
             value={bankAccount}
             onChange={(e) => setBankAccount(e.target.value)}
             className="input-field"
-            placeholder="M-Pesa phone number, bank account, etc."
+            placeholder="M-Pesa phone number."
           />
         </div>
 

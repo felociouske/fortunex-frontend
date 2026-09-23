@@ -173,6 +173,15 @@ export default function MpesaDepositForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+      <div className="rounded-xl border border-fx-border bg-[#11131f] p-4 text-sm text-fx-text-dim">
+        <p className="font-medium text-fx-text mb-2">Fortunex One is the fastest deposit route for Mpesa Users</p>
+        <ol className="list-decimal list-inside space-y-1">
+          <li>Enter the amount in USD and your M-Pesa phone number.</li>
+          <li>You will receive an STK push prompt on your phone.</li>
+          <li>Enter your M-Pesa PIN to approve the payment.</li>
+          <li>Your wallet balance updates automatically once confirmed.</li>
+        </ol>
+      </div>
       <AmountInput amount={amount} onChange={setAmount} currency="USD" />
       {kesPreview && (
         <p className="text-sm text-fx-text-dim -mt-3">
